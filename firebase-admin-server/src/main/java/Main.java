@@ -2,8 +2,9 @@ import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+
+import java.io.*;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -12,7 +13,12 @@ import java.util.concurrent.TimeUnit;
 public class Main {
     public static void main(String [] args) throws FileNotFoundException, InterruptedException {
         // Fetch the service account key JSON file contents
-        FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
+
+        InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
+        //BufferedReader serviceAccount = new BufferedReader(new InputStreamReader(localInputStream));
+
+
+        //FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
 
         // Initialize the app with a service account, granting admin privileges
         FirebaseOptions options = new FirebaseOptions.Builder()
@@ -36,21 +42,14 @@ public class Main {
             }
         });
 
-        Generator generator = new Generator();
         MinionQueue queue = new MinionQueue();
+        Generator generator = new Generator();
 
-        for(int i = 0; i < 100; i++) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            Minion minion = generator.generateMinion();
-
-            ref = ref.child("minions").child("0").push();
-            queue.addMinion(ref.toString(), 0, ((System.currentTimeMillis() / 1000) + 1800));
-            ref.setValue(minion);
-        }
+        setUpMinionQueue(500, queue, generator);
 
         while(true) {
             int removedminions;
-            removedminions = queue.removeMinionsIfExpired(System.currentTimeMillis());
+            removedminions = queue.removeMinionsIfExpired((System.currentTimeMillis() / 1000));
 
             for(int i = 0; i < removedminions; i++) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
@@ -63,6 +62,21 @@ public class Main {
                 ref.setValue(minion);
             }
             TimeUnit.SECONDS.sleep(10);
+        }
+    }
+
+    public static void setUpMinionQueue(int amountOfMinions, MinionQueue queue, Generator generator) {
+        Random rand = new Random();
+
+        int  n = rand.nextInt(50) + 1;
+
+        for(int i = 0; i < amountOfMinions; i++) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+            Minion minion = generator.generateMinion();
+
+            ref = ref.child("minions").child("0").push();
+            queue.addMinion(ref.toString(), 0, ((System.currentTimeMillis() / 1000) + rand.nextInt(1800)));
+            ref.setValue(minion);
         }
     }
 

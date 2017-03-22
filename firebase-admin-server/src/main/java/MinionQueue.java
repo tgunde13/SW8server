@@ -1,3 +1,6 @@
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,16 +12,18 @@ public class MinionQueue {
 
     public void addMinion(String key, int zone, long timestamp){
         minionQueue.add(new QueueMinion(key, zone, timestamp));
+
     }
 
     public int removeMinionsIfExpired(long currentTime){
         int removedMinions = 0;
 
-        while(minionQueue.get(0).timestamp <= currentTime) {
+        while((minionQueue.size() > 0) && (minionQueue.get(0).timestamp <= currentTime)) {
+            DatabaseReference ref = FirebaseDatabase.getInstance().getReferenceFromUrl(minionQueue.get(0).key);
+            ref.removeValue();
             minionQueue.remove(0);
             removedMinions++;
         }
         return removedMinions;
     }
-
 }

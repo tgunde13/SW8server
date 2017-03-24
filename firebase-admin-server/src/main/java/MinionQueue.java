@@ -2,6 +2,8 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 /**
@@ -25,5 +27,13 @@ public class MinionQueue {
             removedMinions++;
         }
         return removedMinions;
+    }
+
+    public void sortQueue(){
+        Collections.sort(minionQueue, new Comparator<QueueMinion>() {
+            public int compare(QueueMinion q1, QueueMinion q2) {
+                return (int) (q2.timestamp - q1.timestamp);
+            }
+        });
     }
 }

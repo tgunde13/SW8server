@@ -12,39 +12,13 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
     public static void main(String [] args) throws FileNotFoundException, InterruptedException {
-        // Fetch the service account key JSON file contents
-
-        InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
-        //BufferedReader serviceAccount = new BufferedReader(new InputStreamReader(localInputStream));
-
-
-        //FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
-
-        // Initialize the app with a service account, granting admin privileges
-        FirebaseOptions options = new FirebaseOptions.Builder()
-                .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
-                .setDatabaseUrl("https://league-of-locations-26618308.firebaseio.com/")
-                .build();
-        FirebaseApp.initializeApp(options);
-
-        // As an admin, the app has access to read and write all data, regardless of Security Rules
-        DatabaseReference adminRef = FirebaseDatabase
-                .getInstance()
-                .getReference("restricted_access/secret_document");
-        adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Object document = dataSnapshot.getValue();
-                System.out.println(document);
-            }
-
-            public void onCancelled(DatabaseError databaseError) {
-                //DB fail
-            }
-        });
+        //Sets up a Firebase connection with admin privileges.
+        setUpFirebaseAdmin();
 
         MinionQueue queue = new MinionQueue();
         Generator generator = new Generator();
 
+        //Makes sure to generate the first 500 minions. Thus also setting the minion cap at 500.
         setUpMinionQueue(500, queue, generator);
 
         while(true) {
@@ -78,27 +52,39 @@ public class Main {
             queue.addMinion(ref.toString(), 0, ((System.currentTimeMillis() / 1000) + rand.nextInt(1800)));
             ref.setValue(minion);
         }
+        queue.sortQueue();
     }
 
-    public static void setUpTestListener(FirebaseDatabase database) {
-        final DatabaseReference ref = database.getReference("test");
-        final DatabaseReference ref2 = database.getReference("test2");
+    private static void setUpFirebaseAdmin(){
+        // Fetch the service account key JSON file contents
 
-        ref.addValueEventListener(new ValueEventListener() {
+        InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
+        //BufferedReader serviceAccount = new BufferedReader(new InputStreamReader(localInputStream));
 
+
+        //FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
+
+        // Initialize the app with a service account, granting admin privileges
+        FirebaseOptions options = new FirebaseOptions.Builder()
+                .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
+                .setDatabaseUrl("https://league-of-locations-26618308.firebaseio.com/")
+                .build();
+        FirebaseApp.initializeApp(options);
+
+        // As an admin, the app has access to read and write all data, regardless of Security Rules
+        DatabaseReference adminRef = FirebaseDatabase
+                .getInstance()
+                .getReference("restricted_access/secret_document");
+        adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
             public void onDataChange(DataSnapshot dataSnapshot) {
-                int i = dataSnapshot.getValue(Integer.class);
-                ref2.setValue((i*2));
+                Object document = dataSnapshot.getValue();
+                System.out.println(document);
             }
 
             public void onCancelled(DatabaseError databaseError) {
-
+                //DB fail
             }
         });
-    }
-
-    public static void setUpSessionListener(FirebaseDatabase database) {
-        
     }
 }
 

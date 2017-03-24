@@ -2,6 +2,7 @@
  * Created by lapiki on 3/14/17.
  */
 abstract class Minion {
+    String type;
     int maxHealth;
     int currentHealth;
     int level;

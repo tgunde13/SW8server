@@ -1,7 +1,7 @@
 import java.security.Timestamp;
 
 /**
- * Created by lapiki on 3/15/17.
+ * Models a minions that is in the server queue. And thus only contains needed information.
  */
 public class QueueMinion {
     String key;

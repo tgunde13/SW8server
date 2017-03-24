@@ -21,8 +21,10 @@ public class Main {
         //Makes sure to generate the first 500 minions. Thus also setting the minion cap at 500.
         setUpMinionQueue(500, queue, generator);
 
+        //Infinite loop, that keeps spawning new minions.
         while(true) {
             int removedminions;
+
             removedminions = queue.removeMinionsIfExpired((System.currentTimeMillis() / 1000));
 
             for(int i = 0; i < removedminions; i++) {
@@ -35,33 +37,45 @@ public class Main {
 
                 ref.setValue(minion);
             }
-            TimeUnit.SECONDS.sleep(10);
+            //The number 7 is the lowest that 60 can ot be divided by, thus it is chosen.
+            TimeUnit.SECONDS.sleep(7);
         }
     }
 
+    /**
+     * Sets up a minion queue with a given amount of minions. Spreads their expiration over 30 minutes.
+     * @param amountOfMinions The amount of minions that should be in the game.
+     * @param queue The MinionQueue object that the minions should be in.
+     * @param generator The Generatior object that generates the minions.
+     */
     public static void setUpMinionQueue(int amountOfMinions, MinionQueue queue, Generator generator) {
         Random rand = new Random();
-
-        int  n = rand.nextInt(50) + 1;
 
         for(int i = 0; i < amountOfMinions; i++) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
             Minion minion = generator.generateMinion();
 
             ref = ref.child("minions").child("0").push();
+
+            //We divide by 1000 to get seconds in tead of miliseconds. We ad a number between 0 and 1799 to expire now or in 30 min.
             queue.addMinion(ref.toString(), 0, ((System.currentTimeMillis() / 1000) + rand.nextInt(1800)));
             ref.setValue(minion);
         }
+        //Since we used random numbers, we need to sort the queue, bacause of the way it works.
         queue.sortQueue();
     }
 
-    private static void setUpFirebaseAdmin(){
+    /**
+     * Sets up a connection to our Firebase backend, with admin priviledges.
+     * @throws FileNotFoundException
+     */
+    private static void setUpFirebaseAdmin() throws FileNotFoundException {
         // Fetch the service account key JSON file contents
 
+        //For when making .jar file
         InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
-        //BufferedReader serviceAccount = new BufferedReader(new InputStreamReader(localInputStream));
 
-
+        //For normal build
         //FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
 
         // Initialize the app with a service account, granting admin privileges

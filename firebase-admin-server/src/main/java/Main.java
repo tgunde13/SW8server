@@ -15,6 +15,10 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
+        TaskManager.start();
+
+        // TODO Lapiki: flyt det efterfølgende ind i en metode i en anden klasse
+
         MinionQueue queue = new MinionQueue();
         Generator generator = new Generator();
 
@@ -29,7 +33,7 @@ public class Main {
 
             for(int i = 0; i < removedminions; i++) {
                 DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                Minion minion = generator.generateMinion();
+                MapMinion minion = generator.generateMinion();
                 long currentTimeSeconds = (System.currentTimeMillis() / 1000);
 
                 ref = ref.child("minions").child("0").push();
@@ -53,7 +57,7 @@ public class Main {
 
         for(int i = 0; i < amountOfMinions; i++) {
             DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            Minion minion = generator.generateMinion();
+            MapMinion minion = generator.generateMinion();
 
             ref = ref.child("minions").child("0").push();
 
@@ -72,6 +76,7 @@ public class Main {
     private static void setUpFirebaseAdmin() throws FileNotFoundException {
         // Fetch the service account key JSON file contents
 
+        // TODO Lapiki: Lav bedre løsning
         //For when making .jar file
         InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
 

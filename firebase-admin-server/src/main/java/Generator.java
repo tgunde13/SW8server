@@ -1,17 +1,17 @@
 import java.util.Random;
 
 /**
- * A class that can generate a Minion object.
+ * A class that can generate a MapMinion object.
  */
 public class Generator {
     Random rand = new Random();
 
 
     /**
-     * Generates a Minion object.
-     * @return The generated Minion object.
+     * Generates a MapMinion object.
+     * @return The generated MapMinion object.
      */
-    public Minion generateMinion(){
+    public MapMinion generateMinion(){
         int level = rand.nextInt(50) + 1;
 
         //Coordinates that are restricted to north jutland.
@@ -22,16 +22,16 @@ public class Generator {
     }
 
     /**
-     * Generates a Minion object of a rondom type.
-     * @param level The level og the Minion.
-     * @param lon Longitude of the Minion.
-     * @param lat Latitude of the Minion.
-     * @return Returns the Minion Object.
+     * Generates a MapMinion object of a rondom type.
+     * @param level The level og the MapMinion.
+     * @param lon Longitude of the MapMinion.
+     * @param lat Latitude of the MapMinion.
+     * @return Returns the MapMinion Object.
      */
-    public Minion generateMinionOfType(int level, double lon, double lat) {
+    public MapMinion generateMinionOfType(int level, double lon, double lat) {
 
         int num = rand.nextInt(2);
-        Minion m = null;
+        MapMinion m = null;
         switch (num) {
             case 0:  m = new Footman(level, lon, lat);
                 break;

@@ -1,43 +1,100 @@
-import java.util.Random;
+import com.google.firebase.database.*;
+
+import java.util.*;
 
 /**
- * A class that can generate a MapMinion object.
+ * A class that can generate MapMinion and updates Firebase.
  */
-public class Generator {
-    Random rand = new Random();
+class Generator extends TimerTask {
+    private static final int MINIONS_PER_ZONE = 10;
+    private static final int MINION_LIFETIME = 30*60*1000; // 30 minutes in milliseconds
 
+    private final List<List<QueueMinion>> bulks;
 
     /**
-     * Generates a MapMinion object.
-     * @return The generated MapMinion object.
+     * Constructs an instance.
      */
-    public MapMinion generateMinion(){
-        int level = rand.nextInt(50) + 1;
+    Generator() {
+        bulks = new ArrayList<List<QueueMinion>>();
 
-        //Coordinates that are restricted to north jutland.
-        double lon = (rand.nextDouble()) + 55.5;
-        double lat = (rand.nextDouble()) + 9.5;
-
-        return generateMinionOfType(level, lon, lat);
+        // Set up 10 empty lists
+        for (int i = 0; i < MINIONS_PER_ZONE; i++) {
+            bulks.add(new ArrayList<QueueMinion>());
+        }
     }
 
     /**
-     * Generates a MapMinion object of a rondom type.
-     * @param level The level og the MapMinion.
-     * @param lon Longitude of the MapMinion.
-     * @param lat Latitude of the MapMinion.
-     * @return Returns the MapMinion Object.
+     * Starts a never ending generating.
      */
-    public MapMinion generateMinionOfType(int level, double lon, double lat) {
+    void start() {
+        // Remove potential existing map minions
+        FirebaseDatabase.getInstance().getReference(FirebaseNodes.ENVIRONMENT_SQUADS).removeValue(new DatabaseReference.CompletionListener() {
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                // Loop this
+                Timer timer = new Timer(true);
+                timer.scheduleAtFixedRate(Generator.this, 0, MINION_LIFETIME / MINIONS_PER_ZONE);
 
-        int num = rand.nextInt(2);
-        MapMinion m = null;
-        switch (num) {
-            case 0:  m = new Footman(level, lon, lat);
-                break;
-            case 1:  m = new Spearman(level, lon, lat);
-                break;
+                System.out.println("TOB: Generator, started");
+            }
+        });
+    }
+
+    /**
+     * Runs an iteration of generating.
+     */
+    @Override
+    public void run() {
+        System.out.println("TOB: Generator, run");
+
+        // Remove minions in the first bulk from Firebase
+        for (QueueMinion minion : bulks.get(0)) {
+            minion.getRef().removeValue();
         }
-        return m;
+
+        // Remove the first bulk
+        bulks.remove(0);
+
+        // Get zones with players in
+        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYER_ZONES).addListenerForSingleValueEvent(new ValueEventListener() {
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Set<Zone> zones = new HashSet<Zone>();
+
+                for (DataSnapshot latSnapshot : dataSnapshot.getChildren()) {
+                    int usedLatIndex = Integer.parseInt(latSnapshot.getKey());
+
+                    for (DataSnapshot lonSnapshot : latSnapshot.getChildren()) {
+                        int usedLonIndex = Integer.parseInt(lonSnapshot.getKey());
+
+                        // Add zones with players in or players nearby
+                        for (int latIndex = usedLatIndex - 1; latIndex <= usedLatIndex + 1; latIndex++) {
+                            for (int lonIndex = usedLonIndex - 1; lonIndex <= usedLonIndex + 1; lonIndex++) {
+                                zones.add(new Zone(latIndex, lonIndex));
+                            }
+                        }
+                    }
+                }
+
+                // Make new bulk from the computed zones
+                List<QueueMinion> bulk = new ArrayList<QueueMinion>();
+                for (Zone zone : zones) {
+                    MapMinion minion = zone.generateMapMinion();
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance()
+                                            .getReference(FirebaseNodes.ENVIRONMENT_SQUADS)
+                                            .child(Integer.toString(zone.getLatIndex()))
+                                            .child(Integer.toString(zone.getLonIndex())).push();
+
+                    ref.setValue(minion); // Add to Firebase
+
+                    bulk.add(new QueueMinion(ref));
+                }
+
+                bulks.add(bulk);
+            }
+
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
     }
 }

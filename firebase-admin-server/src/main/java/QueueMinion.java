@@ -1,16 +1,24 @@
-import java.security.Timestamp;
+import com.google.firebase.database.DatabaseReference;
 
 /**
- * Models a minions that is in the server queue. And thus only contains needed information.
+ * Models a minions that is in the server queue. And thus only contains needed information to save space.
  */
-public class QueueMinion {
-    String key;
-    int zone;
-    long timestamp;
+class QueueMinion {
+    private final DatabaseReference ref;
 
-    public QueueMinion(String key, int zone, long timestamp) {
-        this.key = key;
-        this.zone = zone;
-        this.timestamp = timestamp;
+    /**
+     * Constructs a queue minion.
+     * @param ref Firebase reference to the minion.
+     */
+    QueueMinion(DatabaseReference ref) {
+        this.ref = ref;
+    }
+
+    /**
+     * Gets the Firebase reference to the minion.
+     * @return the reference
+     */
+    DatabaseReference getRef() {
+        return ref;
     }
 }

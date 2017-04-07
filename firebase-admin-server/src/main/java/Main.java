@@ -4,8 +4,6 @@ import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
 
 import java.io.*;
-import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by lapiki on 3/13/17.
@@ -15,58 +13,10 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
+        new Generator().start();
         TaskManager.start();
 
-        // TODO Lapiki: flyt det efterfølgende ind i en metode i en anden klasse
-
-        MinionQueue queue = new MinionQueue();
-        Generator generator = new Generator();
-
-        //Makes sure to generate the first 500 minions. Thus also setting the minion cap at 500.
-        setUpMinionQueue(500, queue, generator);
-
-        //Infinite loop, that keeps spawning new minions.
-        while(true) {
-            int removedminions;
-
-            removedminions = queue.removeMinionsIfExpired((System.currentTimeMillis() / 1000));
-
-            for(int i = 0; i < removedminions; i++) {
-                DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-                MapMinion minion = generator.generateMinion();
-                long currentTimeSeconds = (System.currentTimeMillis() / 1000);
-
-                ref = ref.child("minions").child("0").push();
-                queue.addMinion(ref.toString(), 0, (currentTimeSeconds + 1800));
-
-                ref.setValue(minion);
-            }
-            //The number 7 is the lowest that 60 can ot be divided by, thus it is chosen.
-            TimeUnit.SECONDS.sleep(7);
-        }
-    }
-
-    /**
-     * Sets up a minion queue with a given amount of minions. Spreads their expiration over 30 minutes.
-     * @param amountOfMinions The amount of minions that should be in the game.
-     * @param queue The MinionQueue object that the minions should be in.
-     * @param generator The Generatior object that generates the minions.
-     */
-    public static void setUpMinionQueue(int amountOfMinions, MinionQueue queue, Generator generator) {
-        Random rand = new Random();
-
-        for(int i = 0; i < amountOfMinions; i++) {
-            DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
-            MapMinion minion = generator.generateMinion();
-
-            ref = ref.child("minions").child("0").push();
-
-            //We divide by 1000 to get seconds in tead of miliseconds. We ad a number between 0 and 1799 to expire now or in 30 min.
-            queue.addMinion(ref.toString(), 0, ((System.currentTimeMillis() / 1000) + rand.nextInt(1800)));
-            ref.setValue(minion);
-        }
-        //Since we used random numbers, we need to sort the queue, bacause of the way it works.
-        queue.sortQueue();
+        Thread.currentThread().join();
     }
 
     /**

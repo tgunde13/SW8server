@@ -1,7 +1,11 @@
+import java.util.Random;
+
 /**
- * Created by lapiki on 3/14/17.
+ * A minion of the map.
  */
-abstract class MapMinion {
+class MapMinion {
+    private static final int MAX_LEVEL = 50;
+
     String type;
     int maxHealth;
     int currentHealth;
@@ -13,6 +17,30 @@ abstract class MapMinion {
         this.level = level;
         this.lon = lon;
         this.lat = lat;
+    }
+
+    /**
+     * Constructs a map minion with a given coordinate.
+     * The minion has a random level and type.
+     * @param lat the latitude of the minion
+     * @param lon the longitude of the minion
+     */
+    MapMinion(double lat, double lon) {
+        level = new Random().nextInt(MAX_LEVEL) + 1;
+
+        this.lat = lat;
+        this.lon = lon;
+
+        switch (new Random().nextInt(2)) {
+            case 0:
+                type = "Footman";
+                maxHealth = 100*level;
+                break;
+            case 1:
+                type = "Spearman";
+                maxHealth = 200*level;
+                break;
+        }
     }
 
     public MapMinion() {}

@@ -1,3 +1,4 @@
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -29,5 +30,9 @@ class ResponseHandler {
                 .setValue(statusCode);
             }
         });
+    }
+
+    static void respond(final DataSnapshot request, final int code) {
+        respond(request.getKey(), code);
     }
 }

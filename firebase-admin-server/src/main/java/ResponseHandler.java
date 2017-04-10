@@ -2,6 +2,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import firebase.FirebaseNodes;
 
 /**
  * Handles response to clients over Firebase
@@ -14,10 +15,10 @@ class ResponseHandler {
      */
     static void respond(final String userId, final int statusCode) {
         // Delete request so that client can create a new request
-        final DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child(FirebaseNodes.TASKS_NODE);
-        taskRef.child(FirebaseNodes.REQUESTS_NODE).child(userId).removeValue(new DatabaseReference.CompletionListener() {
+        final DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child(FirebaseNodes.TASKS);
+        taskRef.child(FirebaseNodes.REQUESTS).child(userId).removeValue(new DatabaseReference.CompletionListener() {
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                DatabaseReference respondCodeRef = taskRef.child(FirebaseNodes.RESPONSES_NODE).child(userId).child(FirebaseNodes.STATUS_CODE_NODE);
+                DatabaseReference respondCodeRef = taskRef.child(FirebaseNodes.RESPONSES).child(userId).child(FirebaseNodes.STATUS_CODE);
 
                 // Check for error
                 if (databaseError != null) {
@@ -26,7 +27,7 @@ class ResponseHandler {
                 }
 
                 // Set response code
-                taskRef.child(FirebaseNodes.RESPONSES_NODE).child(userId).child(FirebaseNodes.STATUS_CODE_NODE)
+                taskRef.child(FirebaseNodes.RESPONSES).child(userId).child(FirebaseNodes.STATUS_CODE)
                 .setValue(statusCode);
             }
         });

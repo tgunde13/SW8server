@@ -1,12 +1,15 @@
 import com.google.firebase.database.*;
+import firebase.FirebaseNodes;
+import model.MapMinion;
+import model.Zone;
 
 import java.util.*;
 
 /**
- * A class that can generate MapMinion and updates Firebase.
+ * A class that can generate model.MapMinion and updates Firebase.
  */
 class Generator extends TimerTask {
-    private static final int MINIONS_PER_ZONE = 10;
+    private static final int MINIONS_PER_ZONE = 15;
     private static final int MINION_LIFETIME = 30*60*1000; // 30 minutes in milliseconds
 
     private final List<List<QueueMinion>> bulks;
@@ -55,7 +58,7 @@ class Generator extends TimerTask {
         bulks.remove(0);
 
         // Get zones with players in
-        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYER_ZONES).addListenerForSingleValueEvent(new ValueEventListener() {
+        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYER_ZONE_INDEX).addListenerForSingleValueEvent(new ValueEventListener() {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Set<Zone> zones = new HashSet<Zone>();
 

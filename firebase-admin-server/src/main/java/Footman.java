@@ -1,3 +1,5 @@
+import model.MapMinion;
+
 /**
  * Created by lapiki on 3/14/17.
  */

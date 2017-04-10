@@ -91,16 +91,30 @@ public class TaskManager {
         }
 
         // Check for existing name
-        // TODO Lock
         FirebaseDatabase.getInstance().getReference(FirebaseNodes.NAME_INDEX).child(name)
-        .addListenerForSingleValueEvent(new ValueEventListener() {
-            public void onCancelled(DatabaseError databaseError) {
-                ResponseHandler.respond(userId, HttpCodes.HTTP_INTERNAL_SERVER_ERROR);
+        .runTransaction(new Transaction.Handler() {
+            public Transaction.Result doTransaction(MutableData mutableData) {
+                // If name is already in use
+                if (mutableData.getValue(String.class) != null) {
+                    System.out.println("TOB: " + userId + ", if");
+                    return Transaction.abort();
+                } else {
+                    System.out.println("TOB: " + userId + ", else");
+                    // Update index
+                    mutableData.setValue(userId);
+
+                    return Transaction.success(mutableData);
+                }
             }
 
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                // If name is already in use
-                if (dataSnapshot.exists()) {
+            public void onComplete(DatabaseError databaseError, boolean committed, DataSnapshot dataSnapshot) {
+                if (databaseError != null) {
+                    ResponseHandler.respond(userId, HttpCodes.HTTP_INTERNAL_SERVER_ERROR);
+                    return;
+                }
+
+                // if aborted because name was already in use
+                if (!committed) {
                     ResponseHandler.respond(userId, HttpCodes.HTTP_CONFLICT);
                     return;
                 }
@@ -125,14 +139,7 @@ public class TaskManager {
                 .setValue(player).addOnFailureListener(new TaskFailureListener(userId))
                 .addOnSuccessListener(new OnSuccessListener<Void>() {
                     public void onSuccess(Void aVoid) {
-                        // Update name index
-                        FirebaseDatabase.getInstance().getReference(FirebaseNodes.NAME_INDEX).child(name)
-                        .setValue(userId).addOnFailureListener(new TaskFailureListener(userId))
-                        .addOnSuccessListener(new OnSuccessListener<Void>() {
-                            public void onSuccess(Void aVoid) {
-                                ResponseHandler.respond(userId, HttpCodes.HTTP_OK);
-                            }
-                        });
+                        ResponseHandler.respond(userId, HttpCodes.HTTP_OK);
                     }
                 });
             }
@@ -146,6 +153,7 @@ public class TaskManager {
      */
     private static void setPosition(DataSnapshot snapshot) {
         final String userId = snapshot.getKey();
+        // TODO tjek for fejl
         final Zone newZone = snapshot.child(FirebaseNodes.REQUEST_DATA).getValue(Zone.class);
 
         final DatabaseReference zoneIndexRef = FirebaseDatabase.getInstance()

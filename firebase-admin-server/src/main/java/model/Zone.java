@@ -17,7 +17,7 @@ public class Zone {
      * @param latIndex latitude index
      * @param lonIndex longitude index
      */
-    public Zone(int latIndex, int lonIndex) {
+    public Zone(final int latIndex, final int lonIndex) {
         this.latIndex = latIndex;
         this.lonIndex = lonIndex;
     }
@@ -48,7 +48,7 @@ public class Zone {
      * @return true if and only if this is equal to the object
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         return obj instanceof Zone && ((Zone) obj).latIndex == latIndex && ((Zone) obj).lonIndex == lonIndex;
     }
 
@@ -57,11 +57,11 @@ public class Zone {
      * @return the minion
      */
     public MapMinion generateMapMinion() {
-        Random rand = new Random();
+        final Random rand = new Random();
 
         // Random coordinates within this
-        double lat = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) latIndex) / ((double) ZONES_PER_DEGREE);
-        double lon = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) lonIndex) / ((double) ZONES_PER_DEGREE);
+        final double lat = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) latIndex) / ((double) ZONES_PER_DEGREE);
+        final double lon = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) lonIndex) / ((double) ZONES_PER_DEGREE);
 
         return new MapMinion(lat, lon);
     }

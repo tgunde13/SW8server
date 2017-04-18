@@ -10,8 +10,8 @@ public class BattleStats {
 
     public BattleStats(Minion minion){
         currentHP = minion.health;
-        currentSpeed = minion.health;
-        currentPower = minion.health;
+        currentSpeed = minion.speed;
+        currentPower = minion.power;
     }
 
     private BattleStats(){

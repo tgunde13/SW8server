@@ -5,17 +5,28 @@ import java.util.List;
 /**
  * Created by Chres on 18-04-2017.
  */
-public abstract class BattleAvatar {
-    List<BattleMinion> battleMinions;
+public class BattleAvatar {
+    List<Minion> battleMinions;
+    public String userId;
 
-    BattleAvatar(List<Minion> minions){
+    BattleAvatar(List<PlayerMinion> minions, String playerId){
+        this.userId = playerId;
+
         for(Minion minion : minions){
-            battleMinions.add(new BattleMinion(minion));
+            minion.battleStats = new BattleStats(minion);
+            battleMinions.add(minion);
         }
+    }
+
+    BattleAvatar(EMinion eMinion){
+        eMinion.battleStats = new BattleStats(eMinion);
+        battleMinions.add(eMinion);
     }
 
     BattleAvatar(){
     }
 
-    List<BattleMinion> getBattleMinions(){ return battleMinions; }
+    List<Minion> getBattleMinions(){ return battleMinions; }
+
+    public String getId() { return userId; }
 }

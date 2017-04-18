@@ -17,7 +17,7 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
-        new Generator().start();
+        //new Generator().start();
         TaskManager.start();
 
         Thread.currentThread().join();
@@ -32,10 +32,10 @@ public class Main {
 
         // TODO Lapiki: Lav bedre løsning
         //For when making .jar file
-        InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
+        //InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
 
         //For normal build
-        //FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
+        FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
 
         // Initialize the app with a service account, granting admin privileges
         FirebaseOptions options = new FirebaseOptions.Builder()

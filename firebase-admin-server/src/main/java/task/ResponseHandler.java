@@ -4,6 +4,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import firebase.FirebaseNodes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Handles response to clients over Firebase
  */
@@ -14,20 +17,24 @@ class ResponseHandler {
      * @param statusCode status code to respond with
      */
     static void respond(final String userId, final int statusCode) {
-        // Delete request so that client can create a new request
+        final Map<String, Object> map = new HashMap<>();
+        map.put(FirebaseNodes.TASK_CODE, statusCode);
+
+        respond(userId, map);
+    }
+
+    /**
+     *
+     * @param userId
+     * @param value
+     */
+    static void respond(final String userId, final Map<String, Object> value) {
         final DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child(FirebaseNodes.TASKS);
+
+        // Delete request so that client can create a new request
         taskRef.child(FirebaseNodes.REQUESTS).child(userId).removeValue((databaseError, databaseReference) -> {
-            final DatabaseReference respondCodeRef = taskRef.child(FirebaseNodes.RESPONSES).child(userId).child(FirebaseNodes.STATUS_CODE);
-
-            // Check for error
-            if (databaseError != null) {
-                respondCodeRef.setValue(HttpCodes.INTERNAL_SERVER_ERROR);
-                return;
-            }
-
             // Set response code
-            taskRef.child(FirebaseNodes.RESPONSES).child(userId).child(FirebaseNodes.STATUS_CODE)
-            .setValue(statusCode);
+            taskRef.child(FirebaseNodes.RESPONSES).child(userId).setValue(value);
         });
     }
 }

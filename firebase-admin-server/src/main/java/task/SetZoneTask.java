@@ -9,7 +9,7 @@ import java.util.function.BiConsumer;
 /**
  * Sets the zone of a player.
  *
- * Fields: REQUEST_DATA: zone of the player (of type Zone).
+ * Fields: TASK_DATA: zone of the player (of type Zone).
  *
  * Expected response codes:
  * OK
@@ -47,12 +47,14 @@ class SetZoneTask extends Task {
         // Get new zone
         final Zone newZone;
         try {
-            newZone = snapshot.child(FirebaseNodes.REQUEST_DATA).getValue(Zone.class);
+            newZone = snapshot.child(FirebaseNodes.TASK_DATA).getValue(Zone.class);
         } catch (final DatabaseException e) {
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }
 
+        // Get old zone (if any) and if player was visible or not from Firebase
+        // Then set the next zone
         read((oldZone, oldVisible) -> setNew(newZone, () -> {
             // If player had no old zone, respond
             if (oldZone == null) {

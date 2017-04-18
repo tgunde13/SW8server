@@ -19,7 +19,7 @@ public class BattleState {
     private BattleState(){
     }
 
-    List<BattleAvatar> getTeamOne() { return teamOne; }
-    List<BattleAvatar> getTeamTwo() { return teamTwo; }
+    public List<BattleAvatar> getTeamOne() { return teamOne; }
+    public List<BattleAvatar> getTeamTwo() { return teamTwo; }
     List<BattleMove> getMoves() { return moves; }
 }

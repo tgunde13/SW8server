@@ -46,7 +46,7 @@ public class TaskManager {
         // Get request code
         final int requestCode;
         try {
-            requestCode = (int) (long) (Long) snapshot.child(FirebaseNodes.STATUS_CODE).getValue();
+            requestCode = (int) (long) (Long) snapshot.child(FirebaseNodes.TASK_CODE).getValue();
         } catch (final ClassCastException e) {
             final String userId = snapshot.getKey();
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
@@ -61,8 +61,8 @@ public class TaskManager {
                 break;
             case 3:  new SetZoneTask(snapshot, false).run();
                 break;
-            //case 4:  new SoloPveBattleTask(snapshot).run();
-                //break;
+            case 4:  new SoloPveBattleTask(snapshot).run();
+                break;
             default: System.out.println("TOB: task.TaskManager, onNewTask, default");
                 break;
         }

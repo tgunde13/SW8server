@@ -1,5 +1,6 @@
 package model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -10,6 +11,8 @@ public class BattleAvatar {
     public String userId;
 
     public BattleAvatar(List<PlayerMinion> minions, String playerId){
+        battleMinions = new ArrayList<>();
+
         this.userId = playerId;
 
         for(Minion minion : minions){
@@ -19,6 +22,8 @@ public class BattleAvatar {
     }
 
     public BattleAvatar(EMinion eMinion){
+        battleMinions = new ArrayList<>();
+
         eMinion.battleStats = new BattleStats(eMinion);
         battleMinions.add(eMinion);
     }
@@ -28,5 +33,9 @@ public class BattleAvatar {
 
     List<Minion> getBattleMinions(){ return battleMinions; }
 
-    public String getId() { return userId; }
+    public String getUserId() { return userId; }
+
+    public boolean isPlayerControlled() {
+        return userId != null;
+    }
 }

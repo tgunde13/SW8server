@@ -56,14 +56,14 @@ public class Zone {
      * Generates a map minion.
      * @return the minion
      */
-    public MapMinion generateMapMinion() {
+    public EMinion generateMapMinion() {
         final Random rand = new Random();
 
         // Random coordinates within this
         final double lat = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) latIndex) / ((double) ZONES_PER_DEGREE);
         final double lon = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) lonIndex) / ((double) ZONES_PER_DEGREE);
 
-        return new MapMinion(lat, lon);
+        return new EMinion(lat, lon);
     }
 
     /**

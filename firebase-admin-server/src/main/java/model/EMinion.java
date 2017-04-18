@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * A minion of the map.
  */
-public class MapMinion {
+public class EMinion extends Minion {
     private static final int MAX_LEVEL = 50;
 
     protected String type;
@@ -15,7 +15,7 @@ public class MapMinion {
     double lon;
     double lat;
 
-    public MapMinion(int level, double lon, double lat){
+    public EMinion(int level, double lon, double lat){
         this.level = level;
         this.lon = lon;
         this.lat = lat;
@@ -27,7 +27,7 @@ public class MapMinion {
      * @param lat the latitude of the minion
      * @param lon the longitude of the minion
      */
-    MapMinion(double lat, double lon) {
+    EMinion(double lat, double lon) {
         level = new Random().nextInt(MAX_LEVEL) + 1;
 
         this.lat = lat;
@@ -45,7 +45,7 @@ public class MapMinion {
         }
     }
 
-    public MapMinion() {}
+    public EMinion() {}
 
     public int getMaxHealth(){
         return maxHealth;

@@ -5,11 +5,14 @@ package model;
  */
 public class EBattleAvatar {
 
-    ESquad eSquad;
+    EMinion eMinion;
 
-    EBattleAvatar(ESquad eSquad){
-        this.eSquad = eSquad;
+    EBattleAvatar(EMinion eMinion){
+        this.eMinion = eMinion;
     }
 
-    EBattleAvatar(){}
+    EBattleAvatar(){
+    }
+
+    EMinion getEMinion(){ return eMinion; }
 }

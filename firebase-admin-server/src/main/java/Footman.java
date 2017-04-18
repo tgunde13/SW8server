@@ -1,9 +1,9 @@
-import model.MapMinion;
+import model.EMinion;
 
 /**
  * Created by lapiki on 3/14/17.
  */
-public class Footman extends MapMinion {
+public class Footman extends EMinion {
 
 
     public Footman(int level, double lon, double lat) {

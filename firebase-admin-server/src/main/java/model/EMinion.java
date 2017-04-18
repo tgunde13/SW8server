@@ -16,7 +16,7 @@ public class EMinion extends Minion {
      * @param lat the latitude of the minion
      * @param lon the longitude of the minion
      */
-    EMinion(double lat, double lon) {
+    public EMinion(double lat, double lon) {
         this.lat = lat;
         this.lon = lon;
 

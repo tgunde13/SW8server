@@ -7,7 +7,7 @@ import java.util.List;
  * Created by Chres on 18-04-2017.
  */
 public class BattleAvatar {
-    List<Minion> battleMinions;
+    public List<Minion> battleMinions;
     public String userId;
 
     public BattleAvatar(List<PlayerMinion> minions, String playerId){
@@ -31,7 +31,7 @@ public class BattleAvatar {
     public BattleAvatar(){
     }
 
-    List<Minion> getBattleMinions(){ return battleMinions; }
+    public List<Minion> getBattleMinions(){ return battleMinions; }
 
     public String getUserId() { return userId; }
 

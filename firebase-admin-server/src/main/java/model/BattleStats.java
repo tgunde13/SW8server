@@ -4,11 +4,11 @@ package model;
  * Created by Chres on 18-04-2017.
  */
 public class BattleStats {
-    int currentHP;
-    int currentSpeed;
-    int currentPower;
+    public int currentHP;
+    public int currentSpeed;
+    public int currentPower;
 
-    BattleStats(Minion minion){
+    public BattleStats(Minion minion){
         currentHP = minion.health;
         currentSpeed = minion.health;
         currentPower = minion.health;

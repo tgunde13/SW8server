@@ -9,7 +9,12 @@ import java.util.ArrayList;
 
 /**
  * Configures an avatar.
+ *
  * Fields: REQUEST_DATA: Avatar name.
+ *
+ * Expected response codes:
+ * OK: Avatar is configured
+ * CONFLICT: Name already in use
  */
 class ConfigureAvatarTask extends Task {
     /**
@@ -25,7 +30,7 @@ class ConfigureAvatarTask extends Task {
      * Performs this task.
      */
     @Override
-    void perform() {
+    void run() {
         // Get desired avatar name
         final String name;
         try {
@@ -79,7 +84,7 @@ class ConfigureAvatarTask extends Task {
 
                 // Upload player to Firebase
                 FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId)
-                .setValue(player).addOnFailureListener(new TaskFailureListener(userId))
+                .setValue(player).addOnFailureListener(failureListener)
                 .addOnSuccessListener(aVoid -> ResponseHandler.respond(userId, HttpCodes.OK));
             }
         });

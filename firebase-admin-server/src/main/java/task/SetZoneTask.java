@@ -8,15 +8,17 @@ import java.util.function.BiConsumer;
 
 /**
  * Sets the zone of a player.
+ *
  * Fields: REQUEST_DATA: zone of the player (of type Zone).
+ *
+ * Expected response codes:
+ * OK
  */
 class SetZoneTask extends Task {
     private final boolean visible;
 
     private final DatabaseReference playerZoneRef;
     private final DatabaseReference playerVisibleRef;
-
-    private final TaskFailureListener failureListener;
 
     /**
      * Extracts the user id of the client.
@@ -35,15 +37,13 @@ class SetZoneTask extends Task {
 
         playerZoneRef = playerRef.child(FirebaseNodes.PLAYER_ZONE);
         playerVisibleRef = playerRef.child(FirebaseNodes.PLAYER_VISIBLE);
-
-        failureListener = new TaskFailureListener(userId);
     }
 
     /**
      * Performs this task.
      */
     @Override
-    void perform() {
+    void run() {
         // Get new zone
         final Zone newZone;
         try {

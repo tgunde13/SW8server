@@ -55,12 +55,14 @@ public class TaskManager {
 
         // Call server dependent of request code
         switch (requestCode) {
-            case 1:  new ConfigureAvatarTask(snapshot).perform();
+            case 1:  new ConfigureAvatarTask(snapshot).run();
                 break;
-            case 2:  new SetZoneTask(snapshot, true).perform();
+            case 2:  new SetZoneTask(snapshot, true).run();
                 break;
-            case 3:  new SetZoneTask(snapshot, false).perform();
+            case 3:  new SetZoneTask(snapshot, false).run();
                 break;
+            //case 4:  new SoloPveBattleTask(snapshot).run();
+                //break;
             default: System.out.println("TOB: task.TaskManager, onNewTask, default");
                 break;
         }

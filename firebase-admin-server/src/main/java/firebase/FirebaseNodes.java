@@ -15,6 +15,7 @@ public class FirebaseNodes {
     public static final String PLAYERS = "players";
     public static final String PLAYER_ZONE = "zone";
     public static final String PLAYER_VISIBLE = "visible";
+    public static final String PLAYER_STATUS = "status";
 
     // Avatar name index
     public static final String NAME_INDEX = "nameIndex";

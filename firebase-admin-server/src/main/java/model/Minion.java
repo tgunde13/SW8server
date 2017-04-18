@@ -12,11 +12,9 @@ public class Minion {
     public int power;
     public int speed;
     public int level;
-    public Role role;
     public Type type;
 
     public void generateEMinionData() {
-        role = new ERole();
 
         level = new Random().nextInt(MAX_LEVEL) + 1;
 
@@ -51,10 +49,6 @@ public class Minion {
 
     public int getLevel() {
         return level;
-    }
-
-    public Role getRole() {
-        return role;
     }
 
     public Type getType() {

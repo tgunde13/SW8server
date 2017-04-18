@@ -1,13 +1,13 @@
 import com.google.firebase.database.*;
 import firebase.FirebaseNodes;
-import model.MapMinion;
+import model.EMinion;
 import model.Zone;
 import task.UnhandledValueEventListener;
 
 import java.util.*;
 
 /**
- * A class that can generate model.MapMinion and updates Firebase.
+ * A class that can generate model.EMinion and updates Firebase.
  */
 class Generator extends TimerTask {
     private static final int MINIONS_PER_ZONE = 15;
@@ -65,7 +65,7 @@ class Generator extends TimerTask {
                 // Make new bulk from the computed zones
                 final List<QueueMinion> bulk = new ArrayList<>();
                 for (final Zone zone : zones) {
-                    final MapMinion minion = zone.generateMapMinion();
+                    final EMinion minion = zone.generateMapMinion();
 
                     final DatabaseReference ref = FirebaseDatabase.getInstance()
                                                   .getReference(FirebaseNodes.ENVIRONMENT_SQUADS)

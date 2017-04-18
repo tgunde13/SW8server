@@ -1,9 +1,9 @@
-import model.MapMinion;
+import model.EMinion;
 
 /**
  * Created by lapiki on 3/14/17.
  */
-public class Spearman extends MapMinion {
+public class Spearman extends EMinion {
 
     public Spearman(int level, double lon, double lat) {
         super(level, lon, lat);

@@ -1,11 +1,14 @@
 package task;
 
 import com.google.firebase.database.*;
+import com.google.firebase.tasks.OnSuccessListener;
 import firebase.FirebaseNodes;
+import model.MeleeType;
 import model.Player;
 import model.PlayerMinion;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Configures an avatar.
@@ -67,25 +70,29 @@ class ConfigureAvatarTask extends Task {
                     return;
                 }
 
-                // Create minion for player
-                final PlayerMinion minion = new PlayerMinion();
-                minion.type = "Starter";
-                minion.maxHealth = 10;
-                minion.currentHealth = minion.maxHealth;
-                minion.level = 1;
-                minion.xp = 0;
-
-                // Create player and add minion
+                // Create player
                 final Player player = new Player();
                 player.id = 1;
                 player.name = name;
-                player.minions = new ArrayList<>();
-                player.minions.add(minion);
+
+                FirebaseDatabase.getInstance().getReference().push().getKey();
 
                 // Upload player to Firebase
-                FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId)
-                .setValue(player).addOnFailureListener(failureListener)
-                .addOnSuccessListener(aVoid -> ResponseHandler.respond(userId, HttpCodes.OK));
+                final DatabaseReference playerRef = FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId);
+                playerRef.setValue(player).addOnFailureListener(failureListener)
+                .addOnSuccessListener(aVoid -> {
+                    // Create minion for player
+                    final PlayerMinion minion = new PlayerMinion();
+                    minion.type = new MeleeType();
+                    minion.health = 10;
+                    minion.level = 1;
+                    minion.xp = 0;
+
+                    playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(minion).addOnFailureListener(failureListener)
+                    .addOnSuccessListener(aVoid1 -> {
+                        ResponseHandler.respond(userId, HttpCodes.OK);
+                    });
+                });
             }
         });
     }

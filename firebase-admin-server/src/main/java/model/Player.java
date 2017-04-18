@@ -1,6 +1,7 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Tobias on 31/03/2017.
@@ -8,7 +9,7 @@ import java.util.List;
 public class Player {
     public String name;
     public int id;
-    public List<PlayerMinion> minions;
+    public Map<String, PlayerMinion> minions;
 
     public Player() {}
 
@@ -20,7 +21,7 @@ public class Player {
         return id;
     }
 
-    public List<PlayerMinion> getMinions() {
+    public Map<String, PlayerMinion> getMinions() {
         return minions;
     }
 }

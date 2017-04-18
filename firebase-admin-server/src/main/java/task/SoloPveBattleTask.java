@@ -107,6 +107,4 @@ class SoloPveBattleTask extends BattleTask {
 
         return status == null || status.equals(FirebaseValues.PLAYER_INVITED) || status.equals(FirebaseValues.PLAYER_INVITING);
     }
-
-    private 
 }

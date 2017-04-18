@@ -9,7 +9,7 @@ public class BattleAvatar {
     List<Minion> battleMinions;
     public String userId;
 
-    BattleAvatar(List<PlayerMinion> minions, String playerId){
+    public BattleAvatar(List<PlayerMinion> minions, String playerId){
         this.userId = playerId;
 
         for(Minion minion : minions){
@@ -18,12 +18,12 @@ public class BattleAvatar {
         }
     }
 
-    BattleAvatar(EMinion eMinion){
+    public BattleAvatar(EMinion eMinion){
         eMinion.battleStats = new BattleStats(eMinion);
         battleMinions.add(eMinion);
     }
 
-    BattleAvatar(){
+    public BattleAvatar(){
     }
 
     List<Minion> getBattleMinions(){ return battleMinions; }

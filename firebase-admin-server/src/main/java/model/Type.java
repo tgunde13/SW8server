@@ -8,8 +8,5 @@ import java.util.ArrayList;
 public abstract class Type {
     String id;
 
-    public Type(){
-    }
-
     public abstract ArrayList<Minion> targets(BattleState battleState);
 }

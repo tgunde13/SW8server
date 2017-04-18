@@ -11,7 +11,7 @@ public class PlayerMinion extends Minion {
         xp = 0;
     }
 
-    public PlayerMinion() {}
+    private PlayerMinion() {}
 
     public int getXp() {
         return xp;

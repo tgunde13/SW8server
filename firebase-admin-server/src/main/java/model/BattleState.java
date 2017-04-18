@@ -11,12 +11,12 @@ public class BattleState {
 
     List<BattleMove> moves;
 
-    BattleState(List<BattleAvatar> teamOne, List<BattleAvatar> teamTwo){
+    public BattleState(List<BattleAvatar> teamOne, List<BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
     }
 
-    BattleState(){
+    private BattleState(){
     }
 
     List<BattleAvatar> getTeamOne() { return teamOne; }

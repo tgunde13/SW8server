@@ -1,19 +1,14 @@
 package task;
 
 import com.google.firebase.database.*;
-import com.google.firebase.tasks.OnSuccessListener;
 import firebase.FirebaseNodes;
-import model.MeleeType;
 import model.Player;
 import model.PlayerMinion;
-
-import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  * Configures an avatar.
  *
- * Fields: REQUEST_DATA: Avatar name.
+ * Fields: TASK_DATA: Avatar name.
  *
  * Expected response codes:
  * OK: Avatar is configured
@@ -37,7 +32,7 @@ class ConfigureAvatarTask extends Task {
         // Get desired avatar name
         final String name;
         try {
-            name = (String) snapshot.child(FirebaseNodes.REQUEST_DATA).getValue();
+            name = (String) snapshot.child(FirebaseNodes.TASK_DATA).getValue();
         } catch (final ClassCastException e) {
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
@@ -82,16 +77,10 @@ class ConfigureAvatarTask extends Task {
                 playerRef.setValue(player).addOnFailureListener(failureListener)
                 .addOnSuccessListener(aVoid -> {
                     // Create minion for player
-                    final PlayerMinion minion = new PlayerMinion();
-                    minion.type = "Melee";
-                    minion.health = 10;
-                    minion.level = 1;
-                    minion.xp = 0;
+                    final PlayerMinion minion = new PlayerMinion("Footsoldier", 10, 20, 40, 1, "Melee");
 
                     playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(minion).addOnFailureListener(failureListener)
-                    .addOnSuccessListener(aVoid1 -> {
-                        ResponseHandler.respond(userId, HttpCodes.OK);
-                    });
+                    .addOnSuccessListener(aVoid1 -> ResponseHandler.respond(userId, HttpCodes.OK));
                 });
             }
         });

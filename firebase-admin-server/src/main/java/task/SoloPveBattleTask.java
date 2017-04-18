@@ -7,16 +7,18 @@ import firebase.FirebaseValues;
 import model.*;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
  * Starts a solo PvE battle
  *
  * Fields:
- * REQUEST_ZONE - Zone: Zone of the environment squad to fight
- * REQUEST_KEY - String: Key of the environment squad to fight
- * REQUEST_MINIONS - List<String>: MIN_MINIONS to MAX_MINIONS keys to player minions to fight with
+ * TASK_ZONE - Zone: Zone of the environment squad to fight
+ * TASK_KEY - String: Key of the environment squad to fight
+ * TASK_MINIONS - List<String>: MIN_MINIONS to MAX_MINIONS keys to player minions to fight with
  *
  * Expected response codes:
  * OK: Battle started
@@ -39,17 +41,22 @@ class SoloPveBattleTask extends BattleTask {
     @Override
     void run() {
         getEnvironmentSquad(eMinion -> setPlayerStatus(() -> {
-            List<BattleAvatar> playerTeam = new ArrayList<>();
+            final List<BattleAvatar> playerTeam = new ArrayList<>();
             playerTeam.add(new BattleAvatar(new ArrayList<>(), userId));
 
-            List<BattleAvatar> eTeam = new ArrayList<>();
+            final List<BattleAvatar> eTeam = new ArrayList<>();
             eTeam.add(new BattleAvatar(eMinion));
 
-            BattleState state = new BattleState(playerTeam, eTeam);
+            final BattleState state = new BattleState(playerTeam, eTeam);
 
-            new BattleSession(state).start();
+            final BattleSession session = new BattleSession(state);
+            session.start();
 
-            ResponseHandler.respond(userId, HttpCodes.OK);
+            final Map<String, Object> map = new HashMap<>();
+            map.put(FirebaseNodes.TASK_CODE, HttpCodes.OK);
+            map.put(FirebaseNodes.TASK_DATA, session.getKey());
+
+            ResponseHandler.respond(userId, map);
         }));
     }
 
@@ -62,10 +69,15 @@ class SoloPveBattleTask extends BattleTask {
 
         // Get zone from request
         try {
-            zone = snapshot.child(FirebaseNodes.REQUEST_ZONE).getValue(Zone.class);
-            key = snapshot.child(FirebaseNodes.REQUEST_KEY).getValue(String.class);
+            zone = snapshot.child(FirebaseNodes.TASK_ZONE).getValue(Zone.class);
+            key = snapshot.child(FirebaseNodes.TASK_KEY).getValue(String.class);
         } catch (final DatabaseException e) {
             // TODO Test
+            ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
+            return;
+        }
+
+        if (zone == null || key == null) {
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }
@@ -84,7 +96,7 @@ class SoloPveBattleTask extends BattleTask {
     private void getPlayerMinions(final Consumer<List<PlayerMinion>> action) {
         // Get minion keys
         List<String> keys = new ArrayList<>();
-        for (DataSnapshot child : snapshot.child(FirebaseNodes.REQUEST_MINIONS).getChildren()) {
+        for (DataSnapshot child : snapshot.child(FirebaseNodes.TASK_MINIONS).getChildren()) {
             try {
                 keys.add(child.getValue(String.class));
             } catch (DatabaseException e) {

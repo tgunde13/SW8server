@@ -7,14 +7,13 @@ public class FirebaseNodes {
     // Tasks
     public static final String TASKS = "testing";
     public static final String REQUESTS = "requests";
-
-    public static final String REQUEST_DATA = "data";
-    public static final String REQUEST_ZONE = "zone";
-    public static final String REQUEST_KEY = "key";
-    public static final String REQUEST_MINIONS = "minions";
-
     public static final String RESPONSES = "responses";
-    public static final String STATUS_CODE = "code";
+
+    public static final String TASK_CODE = "code";
+    public static final String TASK_DATA = "data";
+    public static final String TASK_ZONE = "zone";
+    public static final String TASK_KEY = "key";
+    public static final String TASK_MINIONS = "minions";
 
     // Player data
     public static final String PLAYERS = "players";

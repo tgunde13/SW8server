@@ -46,7 +46,7 @@ public class TaskManager {
         // Get request code
         final int requestCode;
         try {
-            requestCode = (int) (long) (Long) snapshot.child(FirebaseNodes.STATUS_CODE).getValue();
+            requestCode = (int) (long) (Long) snapshot.child(FirebaseNodes.TASK_CODE).getValue();
         } catch (final ClassCastException e) {
             final String userId = snapshot.getKey();
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);

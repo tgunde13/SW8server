@@ -1,12 +1,10 @@
 package task;
 
+import battle.BattleSession;
 import com.google.firebase.database.*;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
-import model.EMinion;
-import model.Player;
-import model.PlayerMinion;
-import model.Zone;
+import model.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +39,17 @@ class SoloPveBattleTask extends BattleTask {
     @Override
     void run() {
         getEnvironmentSquad(eMinion -> setPlayerStatus(() -> {
-            FirebaseDatabase.getInstance().getReference(FirebaseNodes.BATTLES).push()
-            .child(FirebaseNodes.BATTLE_DESIRED_MOVES).child(userId).setValue(FirebaseValues.BATTLE_NOT_CHOSEN);
+            List<BattleAvatar> playerTeam = new ArrayList<>();
+            playerTeam.add(new BattleAvatar(new ArrayList<>(), userId));
+
+            List<BattleAvatar> eTeam = new ArrayList<>();
+            eTeam.add(new BattleAvatar(eMinion));
+
+            BattleState state = new BattleState(playerTeam, eTeam);
+
+            new BattleSession(state).start();
+
+            ResponseHandler.respond(userId, HttpCodes.OK);
         }));
     }
 

@@ -26,7 +26,7 @@ public class Zone {
      * Used by Firebase
      */
     @SuppressWarnings("unused")
-    public Zone() {
+    private Zone() {
         latIndex = 0;
         lonIndex = 0;
     }

@@ -61,8 +61,8 @@ public class TaskManager {
                 break;
             case 3:  new SetZoneTask(snapshot, false).run();
                 break;
-            //case 4:  new SoloPveBattleTask(snapshot).run();
-                //break;
+            case 4:  new SoloPveBattleTask(snapshot).run();
+                break;
             default: System.out.println("TOB: task.TaskManager, onNewTask, default");
                 break;
         }

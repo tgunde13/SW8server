@@ -7,7 +7,11 @@ public class FirebaseNodes {
     // Tasks
     public static final String TASKS = "tasks";
     public static final String REQUESTS = "requests";
+
     public static final String REQUEST_DATA = "data";
+    public static final String REQUEST_ZONE = "zone";
+    public static final String REQUEST_KEY = "key";
+
     public static final String RESPONSES = "responses";
     public static final String STATUS_CODE = "code";
 
@@ -22,6 +26,11 @@ public class FirebaseNodes {
 
     // Environment squads
     public static final String ENVIRONMENT_SQUADS = "eSquads";
+
+    // Battles
+    public static final String BATTLES = "battles";
+    public static final String BATTLE_DESIRED_MOVES = "desiredMoves";
+    public static final String BATTLE_STATE = "state";
 
     // Player zone index
     public static final String VISIBLE_PLAYER_ZONE_INDEX = "playerZoneIndex";

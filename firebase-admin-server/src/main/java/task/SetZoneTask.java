@@ -53,6 +53,8 @@ class SetZoneTask extends Task {
             return;
         }
 
+        // Get old zone (if any) and if player was visible or not from Firebase
+        // Then set the next zone
         read((oldZone, oldVisible) -> setNew(newZone, () -> {
             // If player had no old zone, respond
             if (oldZone == null) {

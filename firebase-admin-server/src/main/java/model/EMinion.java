@@ -7,19 +7,8 @@ import java.util.Random;
  */
 public class EMinion extends Minion {
     private static final int MAX_LEVEL = 50;
-
-    protected String type;
-    protected int maxHealth;
-    protected int currentHealth;
-    int level;
     double lon;
     double lat;
-
-    public EMinion(int level, double lon, double lat){
-        this.level = level;
-        this.lon = lon;
-        this.lat = lat;
-    }
 
     /**
      * Constructs a map minion with a given coordinate.
@@ -28,36 +17,36 @@ public class EMinion extends Minion {
      * @param lon the longitude of the minion
      */
     EMinion(double lat, double lon) {
-        level = new Random().nextInt(MAX_LEVEL) + 1;
-
         this.lat = lat;
         this.lon = lon;
 
+        generateEMinionData();
+    }
+
+    public void generateEMinionData() {
+
+        level = new Random().nextInt(MAX_LEVEL) + 1;
+
         switch (new Random().nextInt(2)) {
             case 0:
-                type = "Footman";
-                maxHealth = 100*level;
+                name = "Swordman";
+                type = "Melee";
+                health = 100*level;
+                speed = 20;
+                power = 40*level;
                 break;
             case 1:
-                type = "Spearman";
-                maxHealth = 200*level;
+                name = "Spearman";
+                type = "Melee";
+                health = 200*level;
+                speed = 10;
+                power = 20*level;
+
                 break;
         }
     }
 
     public EMinion() {}
-
-    public int getMaxHealth(){
-        return maxHealth;
-    }
-
-    public int getCurrentHealth(){
-        return currentHealth;
-    }
-
-    public int getLevel(){
-        return level;
-    }
 
     public double getLon(){
         return lon;

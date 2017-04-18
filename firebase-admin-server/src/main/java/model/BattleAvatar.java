@@ -23,7 +23,7 @@ public class BattleAvatar {
         battleMinions.add(eMinion);
     }
 
-    BattleAvatar(){
+    public BattleAvatar(){
     }
 
     List<Minion> getBattleMinions(){ return battleMinions; }

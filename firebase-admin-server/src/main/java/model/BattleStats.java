@@ -14,7 +14,7 @@ public class BattleStats {
         currentPower = minion.health;
     }
 
-    public BattleStats(){
+    private BattleStats(){
     }
 
     public int getCurrentHP(){return currentHP; }

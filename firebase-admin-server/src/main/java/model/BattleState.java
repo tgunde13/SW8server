@@ -16,7 +16,7 @@ public class BattleState {
         this.teamTwo = teamTwo;
     }
 
-    BattleState(){
+    private BattleState(){
     }
 
     List<BattleAvatar> getTeamOne() { return teamOne; }

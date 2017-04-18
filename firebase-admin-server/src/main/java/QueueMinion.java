@@ -10,7 +10,7 @@ class QueueMinion {
      * Constructs a queue minion.
      * @param ref Firebase reference to the minion.
      */
-    QueueMinion(DatabaseReference ref) {
+    QueueMinion(final DatabaseReference ref) {
         this.ref = ref;
     }
 

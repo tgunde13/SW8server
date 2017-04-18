@@ -11,9 +11,11 @@ public class FirebaseNodes {
     public static final String RESPONSES = "responses";
     public static final String STATUS_CODE = "code";
 
-    // model.Player data
+    // Player data
     public static final String PLAYERS = "players";
     public static final String PLAYER_ZONE = "zone";
+    public static final String PLAYER_VISIBLE = "visible";
+    public static final String PLAYER_STATUS = "status";
 
     // Avatar name index
     public static final String NAME_INDEX = "nameIndex";
@@ -21,6 +23,7 @@ public class FirebaseNodes {
     // Environment squads
     public static final String ENVIRONMENT_SQUADS = "eSquads";
 
-    // model.Player zone index
-    public static final String PLAYER_ZONE_INDEX = "playerZoneIndex";
+    // Player zone index
+    public static final String VISIBLE_PLAYER_ZONE_INDEX = "playerZoneIndex";
+    public static final String HIDDEN_PLAYER_ZONE_INDEX = "hiddenPlayerZoneIndex";
 }

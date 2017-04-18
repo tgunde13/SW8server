@@ -83,7 +83,7 @@ class ConfigureAvatarTask extends Task {
                 .addOnSuccessListener(aVoid -> {
                     // Create minion for player
                     final PlayerMinion minion = new PlayerMinion();
-                    minion.type = new MeleeType();
+                    minion.type = "Melee";
                     minion.health = 10;
                     minion.level = 1;
                     minion.xp = 0;

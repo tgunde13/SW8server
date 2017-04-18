@@ -12,7 +12,7 @@ public class Minion {
     public int power;
     public int speed;
     public int level;
-    public Type type;
+    public String type;
 
     public void generateEMinionData() {
 
@@ -21,14 +21,14 @@ public class Minion {
         switch (new Random().nextInt(2)) {
             case 0:
                 name = "Swordman";
-                type = new MeleeType();
+                type = "Melee";
                 health = 100*level;
                 speed = 20;
                 power = 40*level;
                 break;
             case 1:
                 name = "Spearman";
-                type = new MeleeType();
+                type = "Melee";
                 health = 200*level;
                 speed = 10;
                 power = 20*level;
@@ -51,7 +51,7 @@ public class Minion {
         return level;
     }
 
-    public Type getType() {
+    public String getType() {
         return type;
     }
 }

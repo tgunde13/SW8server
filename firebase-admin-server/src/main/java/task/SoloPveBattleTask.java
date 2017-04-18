@@ -3,9 +3,13 @@ package task;
 import com.google.firebase.database.*;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
-import model.MapMinion;
+import model.EMinion;
+import model.Player;
+import model.PlayerMinion;
 import model.Zone;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Consumer;
 
 /**
@@ -14,16 +18,20 @@ import java.util.function.Consumer;
  * Fields:
  * REQUEST_ZONE - Zone: Zone of the environment squad to fight
  * REQUEST_KEY - String: Key of the environment squad to fight
+ * REQUEST_MINIONS - List<String>: MIN_MINIONS to MAX_MINIONS keys to player minions to fight with
  *
  * Expected response codes:
  * OK: Battle started
  * NOT_FOUND: Environment squad not found (e.g. if squad has expired)
  */
 class SoloPveBattleTask extends BattleTask {
+    private static final int MIN_MINIONS = 1;
+    private static final int MAX_MINIONS = 3;
+
     /**
      * Extracts the user id of the client.
      * Stores the snapshot.
-     * Creates a failure listener
+     * Creates a failure listener.
      * @param snapshot Firebase snapshot of the request
      */
     SoloPveBattleTask(final DataSnapshot snapshot) {
@@ -32,21 +40,25 @@ class SoloPveBattleTask extends BattleTask {
 
     @Override
     void run() {
+        getEnvironmentSquad(eMinion -> setPlayerStatus(() -> {
+            FirebaseDatabase.getInstance().getReference(FirebaseNodes.BATTLES).push()
+            .child(FirebaseNodes.BATTLE_DESIRED_MOVES).child(userId).setValue(FirebaseValues.BATTLE_NOT_CHOSEN);
+        }));
     }
 
     /**
      * @param action
      */
-    private void getEnvironmentSquad(final Consumer<MapMinion> action) {
+    private void getEnvironmentSquad(final Consumer<EMinion> action) {
         final Zone zone;
         final String key;
 
         // Get zone from request
         try {
-            // TODO Test
             zone = snapshot.child(FirebaseNodes.REQUEST_ZONE).getValue(Zone.class);
             key = snapshot.child(FirebaseNodes.REQUEST_KEY).getValue(String.class);
         } catch (final DatabaseException e) {
+            // TODO Test
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }
@@ -55,10 +67,54 @@ class SoloPveBattleTask extends BattleTask {
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
         .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
             if (dataSnapshot.exists()) {
-                action.accept(dataSnapshot.getValue(MapMinion.class));
+                action.accept(dataSnapshot.getValue(EMinion.class));
             } else {
                 ResponseHandler.respond(userId, HttpCodes.NOT_FOUND);
             }
+        }));
+    }
+
+    private void getPlayerMinions(final Consumer<List<PlayerMinion>> action) {
+        // Get minion keys
+        List<String> keys = new ArrayList<>();
+        for (DataSnapshot child : snapshot.child(FirebaseNodes.REQUEST_MINIONS).getChildren()) {
+            try {
+                keys.add(child.getValue(String.class));
+            } catch (DatabaseException e) {
+                // TODO Test
+                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
+                return;
+            }
+        }
+
+        if (keys.size() < MIN_MINIONS || keys.size() > MAX_MINIONS) {
+            ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
+            return;
+        }
+
+        getPlayerMinionsHelper(keys, new ArrayList<>(), action);
+    }
+
+    private void getPlayerMinionsHelper(final List<String> keys, final List<PlayerMinion> minions, final Consumer<List<PlayerMinion>> action) {
+        if (keys.isEmpty()) {
+            action.accept(minions);
+        }
+
+        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId)
+        .child(FirebaseNodes.PLAYER_MINIONS).child(keys.get(0))
+        .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
+            // Check if key from client is valid
+            if (!dataSnapshot.exists()) {
+                // TODO Test
+                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
+                return;
+            }
+
+            // Remove key and add minion
+            keys.remove(0);
+            minions.add(dataSnapshot.getValue(PlayerMinion.class));
+
+            getPlayerMinionsHelper(keys, minions, action);
         }));
     }
 

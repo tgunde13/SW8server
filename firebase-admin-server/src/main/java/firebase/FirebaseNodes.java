@@ -11,6 +11,7 @@ public class FirebaseNodes {
     public static final String REQUEST_DATA = "data";
     public static final String REQUEST_ZONE = "zone";
     public static final String REQUEST_KEY = "key";
+    public static final String REQUEST_MINIONS = "minions";
 
     public static final String RESPONSES = "responses";
     public static final String STATUS_CODE = "code";

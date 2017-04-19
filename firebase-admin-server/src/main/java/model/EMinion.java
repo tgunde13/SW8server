@@ -7,8 +7,8 @@ import java.util.Random;
  */
 public class EMinion extends Minion {
     private static final int MAX_LEVEL = 50;
-    double lon;
-    double lat;
+    public double lon;
+    public double lat;
 
     /**
      * Constructs a map minion with a given coordinate.

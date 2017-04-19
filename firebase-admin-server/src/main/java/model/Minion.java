@@ -7,13 +7,13 @@ import java.util.Random;
  */
 public class Minion {
     private static final int MAX_LEVEL = 50;
-    public String name;
-    public int health;
-    public int power;
-    public int speed;
-    public int level;
-    public String type;
-    public BattleStats battleStats;
+    protected String name;
+    protected int health;
+    protected int power;
+    protected int speed;
+    protected int level;
+    protected String type;
+    protected BattleStats battleStats;
 
     /*public Minion(String fileName){
         //Insert system to read files
@@ -49,4 +49,6 @@ public class Minion {
     }
 
     public BattleStats getBattleStats() { return battleStats; }
+
+    //public void setBattleStats(BattleStats battleStats) {this.battleStats = battleStats;}
 }

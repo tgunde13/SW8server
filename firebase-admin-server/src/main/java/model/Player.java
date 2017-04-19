@@ -7,11 +7,13 @@ import java.util.Map;
  * Created by Tobias on 31/03/2017.
  */
 public class Player {
-    public String name;
-    public int id;
-    public Map<String, PlayerMinion> minions;
+    private String name;
+    private int id;
+    private Map<String, PlayerMinion> minions;
 
-    public Player() {}
+    public Player(String name, int id, Map<String, PlayerMinion> minions) {}
+
+    private Player() {}
 
     public String getName() {
         return name;
@@ -21,7 +23,11 @@ public class Player {
         return id;
     }
 
-    public Map<String, PlayerMinion> getMinions() {
-        return minions;
-    }
+    public Map<String, PlayerMinion> getMinions() { return minions; }
+
+    public void setId(int id) { this.id = id; }
+
+    public void setName(String name) {this.name = name;}
+
+    public void setMinions(Map<String, PlayerMinion> minions) { this.minions = minions; }
 }

@@ -11,7 +11,7 @@ public class Player {
     private int id;
     private Map<String, PlayerMinion> minions;
 
-    public Player(String name, int id, Map<String, PlayerMinion> minions) {}
+    public Player(String name, int id) {}
 
     private Player() {}
 

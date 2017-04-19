@@ -10,9 +10,13 @@ public class BattleState {
     private List<BattleAvatar> teamTwo;
     private List<BattleMove> moves;
 
+    private int turn;
+
     public BattleState(List<BattleAvatar> teamOne, List<BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
+
+        turn = 0;
     }
 
     private BattleState(){

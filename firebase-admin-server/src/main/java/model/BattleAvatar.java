@@ -1,5 +1,7 @@
 package model;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,6 +36,7 @@ public class BattleAvatar {
 
     public String getUserId() { return userId; }
 
+    @Exclude
     public boolean isPlayerControlled() {
         return userId != null;
     }

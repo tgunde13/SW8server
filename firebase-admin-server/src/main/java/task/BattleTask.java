@@ -13,7 +13,7 @@ abstract class BattleTask extends Task {
      * Creates a failure listener
      * @param snapshot Firebase snapshot of the request
      */
-    BattleTask(DataSnapshot snapshot) {
+    BattleTask(final DataSnapshot snapshot) {
         super(snapshot);
     }
 }

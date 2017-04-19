@@ -72,7 +72,6 @@ class SoloPveBattleTask extends BattleTask {
             zone = snapshot.child(FirebaseNodes.TASK_ZONE).getValue(Zone.class);
             key = snapshot.child(FirebaseNodes.TASK_KEY).getValue(String.class);
         } catch (final DatabaseException e) {
-            // TODO Test
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }
@@ -90,50 +89,6 @@ class SoloPveBattleTask extends BattleTask {
             } else {
                 ResponseHandler.respond(userId, HttpCodes.NOT_FOUND);
             }
-        }));
-    }
-
-    private void getPlayerMinions(final Consumer<List<PlayerMinion>> action) {
-        // Get minion keys
-        List<String> keys = new ArrayList<>();
-        for (DataSnapshot child : snapshot.child(FirebaseNodes.TASK_MINIONS).getChildren()) {
-            try {
-                keys.add(child.getValue(String.class));
-            } catch (DatabaseException e) {
-                // TODO Test
-                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-                return;
-            }
-        }
-
-        if (keys.size() < MIN_MINIONS || keys.size() > MAX_MINIONS) {
-            ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-            return;
-        }
-
-        getPlayerMinionsHelper(keys, new ArrayList<>(), action);
-    }
-
-    private void getPlayerMinionsHelper(final List<String> keys, final List<PlayerMinion> minions, final Consumer<List<PlayerMinion>> action) {
-        if (keys.isEmpty()) {
-            action.accept(minions);
-        }
-
-        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId)
-        .child(FirebaseNodes.PLAYER_MINIONS).child(keys.get(0))
-        .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
-            // Check if key from client is valid
-            if (!dataSnapshot.exists()) {
-                // TODO Test
-                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-                return;
-            }
-
-            // Remove key and add minion
-            keys.remove(0);
-            minions.add(dataSnapshot.getValue(PlayerMinion.class));
-
-            getPlayerMinionsHelper(keys, minions, action);
         }));
     }
 

@@ -1,5 +1,7 @@
 package model;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,10 +33,11 @@ public class BattleAvatar {
     public BattleAvatar(){
     }
 
-    List<Minion> getBattleMinions(){ return battleMinions; }
+    public List<Minion> getBattleMinions(){ return battleMinions; }
 
     public String getUserId() { return userId; }
 
+    @Exclude
     public boolean isPlayerControlled() {
         return userId != null;
     }

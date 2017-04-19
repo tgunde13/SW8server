@@ -11,9 +11,13 @@ public class BattleState {
 
     List<BattleMove> moves;
 
+    private int turn;
+
     public BattleState(List<BattleAvatar> teamOne, List<BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
+
+        turn = 0;
     }
 
     private BattleState(){
@@ -22,4 +26,12 @@ public class BattleState {
     public List<BattleAvatar> getTeamOne() { return teamOne; }
     public List<BattleAvatar> getTeamTwo() { return teamTwo; }
     List<BattleMove> getMoves() { return moves; }
+
+    /**
+     * Get turn number.
+     * @return turn number
+     */
+    public int getTurn() {
+        return turn;
+    }
 }

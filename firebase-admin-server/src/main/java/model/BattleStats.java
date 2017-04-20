@@ -8,7 +8,7 @@ public class BattleStats {
     private int currentSpeed;
     private int currentPower;
 
-    public BattleStats(Minion minion){
+    public BattleStats(final Minion minion){
         currentHP = minion.health;
         currentSpeed = minion.speed;
         currentPower = minion.power;
@@ -21,7 +21,7 @@ public class BattleStats {
     public int getCurrentSpeced(){return currentSpeed; }
     public int getCurrentPower(){return currentPower; }
 
-    public void setCurrentHP(int currentHP) { this.currentHP = currentHP; }
-    public void setCurrentPower(int currentPower) { this.currentPower = currentPower; }
-    public void setCurrentSpeed(int currentSpeed) { this.currentSpeed = currentSpeed; }
+    public void setCurrentHP(final int currentHP) { this.currentHP = currentHP; }
+    public void setCurrentPower(final int currentPower) { this.currentPower = currentPower; }
+    public void setCurrentSpeed(final int currentSpeed) { this.currentSpeed = currentSpeed; }
 }

@@ -12,7 +12,7 @@ public class MeleeType extends Type {
 
     MeleeType(){ id = "Melee"; }
 
-    public ArrayList<Minion> targets(BattleState battleState){
+    public ArrayList<Minion> targets(final BattleState battleState){
         return null;
     }
 }

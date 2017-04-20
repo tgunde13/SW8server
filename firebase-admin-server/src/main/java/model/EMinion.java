@@ -16,7 +16,7 @@ public class EMinion extends Minion {
      * @param lat the latitude of the minion
      * @param lon the longitude of the minion
      */
-    public EMinion(double lat, double lon) {
+    public EMinion(final double lat, final double lon) {
         this.lat = lat;
         this.lon = lon;
 
@@ -56,7 +56,7 @@ public class EMinion extends Minion {
         return lat;
     }
 
-    public void setLat(double lat) { this.lat = lat; }
+    public void setLat(final double lat) { this.lat = lat; }
 
-    public void setLon(double lon) {this.lon = lon;}
+    public void setLon(final double lon) {this.lon = lon;}
 }

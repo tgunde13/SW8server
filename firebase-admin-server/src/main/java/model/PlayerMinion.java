@@ -6,7 +6,7 @@ package model;
 public class PlayerMinion extends Minion {
     private int xp;
 
-    public PlayerMinion(String name, int health, int speed, int power, int level, String type){
+    public PlayerMinion(final String name, final int health, final int speed, final int power, final int level, final String type){
         super(name, health, speed, power, level, type);
         xp = 0;
     }

@@ -19,7 +19,7 @@ public class BattleSession {
     private final BattleState state;
     private final DatabaseReference ref;
 
-    public BattleSession(BattleState state) {
+    public BattleSession(final BattleState state) {
         this.state = state;
         ref = FirebaseDatabase.getInstance().getReference(FirebaseNodes.BATTLES).push();
     }

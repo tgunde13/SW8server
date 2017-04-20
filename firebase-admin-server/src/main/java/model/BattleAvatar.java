@@ -9,8 +9,8 @@ import java.util.List;
  * Created by Chres on 18-04-2017.
  */
 public class BattleAvatar {
-    public List<Minion> battleMinions;
-    public String userId;
+    private List<Minion> battleMinions;
+    private String userId;
 
     public BattleAvatar(List<PlayerMinion> minions, String playerId){
         battleMinions = new ArrayList<>();
@@ -25,12 +25,11 @@ public class BattleAvatar {
 
     public BattleAvatar(EMinion eMinion){
         battleMinions = new ArrayList<>();
-
         eMinion.battleStats = new BattleStats(eMinion);
         battleMinions.add(eMinion);
     }
 
-    public BattleAvatar(){
+    private BattleAvatar(){
     }
 
     public List<Minion> getBattleMinions(){ return battleMinions; }

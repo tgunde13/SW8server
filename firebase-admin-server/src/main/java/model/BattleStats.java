@@ -4,9 +4,9 @@ package model;
  * Created by Chres on 18-04-2017.
  */
 public class BattleStats {
-    public int currentHP;
-    public int currentSpeed;
-    public int currentPower;
+    private int currentHP;
+    private int currentSpeed;
+    private int currentPower;
 
     public BattleStats(Minion minion){
         currentHP = minion.health;
@@ -20,4 +20,8 @@ public class BattleStats {
     public int getCurrentHP(){return currentHP; }
     public int getCurrentSpeced(){return currentSpeed; }
     public int getCurrentPower(){return currentPower; }
+
+    public void setCurrentHP(int currentHP) { this.currentHP = currentHP; }
+    public void setCurrentPower(int currentPower) { this.currentPower = currentPower; }
+    public void setCurrentSpeed(int currentSpeed) { this.currentSpeed = currentSpeed; }
 }

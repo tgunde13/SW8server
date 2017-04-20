@@ -1,12 +1,13 @@
 package model;
-
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by Chres on 18-04-2017.
  */
 public abstract class Type {
-    public String id;
+    protected String id;
 
-    public abstract ArrayList<Minion> targets(BattleState battleState);
+    public abstract List<Minion> targets(BattleState battleState);
+
+    public String getId() { return id; }
 }

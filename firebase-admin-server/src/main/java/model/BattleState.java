@@ -6,9 +6,9 @@ import java.util.List;
  * Created by Chres on 18-04-2017.
  */
 public class BattleState {
-    public List<BattleAvatar> teamOne;
-    public List<BattleAvatar> teamTwo;
-    public List<BattleMove> moves;
+    private List<BattleAvatar> teamOne;
+    private List<BattleAvatar> teamTwo;
+    private List<BattleMove> moves;
 
     public BattleState(List<BattleAvatar> teamOne, List<BattleAvatar> teamTwo){
         this.teamOne = teamOne;

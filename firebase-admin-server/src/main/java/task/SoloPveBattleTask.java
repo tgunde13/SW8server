@@ -18,14 +18,12 @@ import java.util.function.Consumer;
  * Fields:
  * TASK_ZONE - Zone: Zone of the environment squad to fight
  * TASK_KEY - String: Key of the environment squad to fight
- * TASK_MINIONS - List<String>: MIN_MINIONS to MAX_MINIONS keys to player minions to fight with
  *
  * Expected response codes:
  * OK: Battle started
  * NOT_FOUND: Environment squad not found (e.g. if squad has expired)
  */
 class SoloPveBattleTask extends BattleTask {
-    private static final int MIN_MINIONS = 1;
     private static final int MAX_MINIONS = 3;
 
     /**
@@ -49,7 +47,7 @@ class SoloPveBattleTask extends BattleTask {
 
             final BattleState state = new BattleState(playerTeam, eTeam);
 
-            final BattleSession session = new BattleSession(state);
+            final BattleSession session = new BattleSession(state, MAX_MINIONS);
             session.start();
 
             final Map<String, Object> map = new HashMap<>();
@@ -61,7 +59,10 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param action
+     * Gets the environments squad to fight with from Firebase.
+     * If data from request is invalid, a BAD_REQUEST is responded.
+     * If environment squad is not found, a NOT_FOUND is responded.
+     * @param action action to call if successful
      */
     private void getEnvironmentSquad(final Consumer<EMinion> action) {
         final Zone zone;
@@ -93,7 +94,9 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param action
+     * If player is allowed to fight, sets the player status to PLAYER_BATTLE.
+     * If not allowed, a CONFLICT is responded.
+     * @param action action to call if successful
      */
     private void setPlayerStatus(final Runnable action) {
         // Read player status
@@ -129,8 +132,10 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param data
-     * @return
+     * Gets if battle is allowed.
+     * A battle is allowed if the player status is null, PLAYER_INVITED, or PLAYER_INVITING.
+     * @param data status to check with
+     * @return true if, and only if, battle is allowed
      */
     private static boolean battleAllowed(final MutableData data) {
         final String status = data.getValue(String.class);

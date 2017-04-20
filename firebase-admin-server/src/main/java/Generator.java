@@ -10,8 +10,8 @@ import java.util.*;
  * A class that can generate model.EMinion and updates Firebase.
  */
 class Generator extends TimerTask {
-    private static final int MINIONS_PER_ZONE = 15;
-    private static final int MINION_LIFETIME = 30*60*1000; // 30 minutes in milliseconds
+    private static final int MINIONS_PER_ZONE = 30;
+    private static final int MINION_LIFETIME = 30 * 60 * 1000; // 30 minutes in milliseconds
 
     private final List<List<QueueMinion>> bulks;
 

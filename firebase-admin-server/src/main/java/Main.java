@@ -3,6 +3,7 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
 import firebase.FirebaseNodes;
+import model.EMinion;
 import task.TaskManager;
 
 import java.io.*;

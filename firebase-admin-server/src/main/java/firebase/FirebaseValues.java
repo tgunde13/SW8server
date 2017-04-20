@@ -1,7 +1,7 @@
 package firebase;
 
 /**
- * Created by Tobias on 17/04/2017.
+ * Contains values for Firebase.
  */
 public class FirebaseValues {
     public static final String PLAYER_INVITED = "invited";

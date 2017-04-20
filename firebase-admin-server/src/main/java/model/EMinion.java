@@ -46,7 +46,7 @@ public class EMinion extends Minion {
         }
     }
 
-    public EMinion() {}
+    private EMinion() {}
 
     public double getLon(){
         return lon;

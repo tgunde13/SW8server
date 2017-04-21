@@ -2,8 +2,7 @@ package model;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -11,33 +10,26 @@ import java.util.List;
  * and a possible userId if the battle avatar is being controlled by a player
  */
 public class BattleAvatar {
-    private List<Minion> battleMinions;
+    private Map<String,Minion> battleMinions;
     private String userId;
 
     /**
      * Constructor for creating a battle avatar with a list of minions and a user ID.
-     * @param minions list of minions being used by the battle avatar.
      * @param UserId Id of the user this avatar belongs to.
      */
-    public BattleAvatar(final List<PlayerMinion> minions, final String UserId){
-        battleMinions = new ArrayList<>();
-
+    public BattleAvatar(final String UserId){
+        battleMinions = new HashMap<>();
         this.userId = UserId;
-
-        for(final Minion minion : minions){
-            minion.battleStats = new BattleStats(minion);
-            battleMinions.add(minion);
-        }
     }
 
     /**
      * Constructor for a battle avatar that does not belong to a player but an environment minion.
      * @param eMinion is the environment minion that is being fought.
      */
-    public BattleAvatar(final EMinion eMinion){
-        battleMinions = new ArrayList<>();
+    public BattleAvatar(String key, final EMinion eMinion){
+        battleMinions = new HashMap<>();
         eMinion.battleStats = new BattleStats(eMinion);
-        battleMinions.add(eMinion);
+        battleMinions.put(key, eMinion);
     }
 
 
@@ -52,7 +44,7 @@ public class BattleAvatar {
      * Getter for battleminions
      * @return battleMinions
      */
-    public List<Minion> getBattleMinions(){ return battleMinions; }
+    public Map<String,Minion> getBattleMinions(){ return battleMinions; }
 
 
     /**

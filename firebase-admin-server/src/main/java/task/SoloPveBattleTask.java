@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 /**
@@ -40,12 +41,12 @@ class SoloPveBattleTask extends BattleTask {
 
     @Override
     void run() {
-        getEnvironmentSquad(eMinion -> setPlayerStatus(() -> {
+        getEnvironmentSquad((key, eMinion) -> setPlayerStatus(() -> {
             final List<BattleAvatar> playerTeam = new ArrayList<>();
-            playerTeam.add(new BattleAvatar(new ArrayList<>(), userId));
+            playerTeam.add(new BattleAvatar(userId));
 
             final List<BattleAvatar> eTeam = new ArrayList<>();
-            eTeam.add(new BattleAvatar(eMinion));
+            eTeam.add(new BattleAvatar(key, eMinion));
 
             final BattleState state = new BattleState(playerTeam, eTeam);
 
@@ -63,7 +64,7 @@ class SoloPveBattleTask extends BattleTask {
     /**
      * @param action
      */
-    private void getEnvironmentSquad(final Consumer<EMinion> action) {
+    private void getEnvironmentSquad(final BiConsumer<String, EMinion> action) {
         final Zone zone;
         final String key;
 
@@ -85,7 +86,7 @@ class SoloPveBattleTask extends BattleTask {
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
         .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
             if (dataSnapshot.exists()) {
-                action.accept(dataSnapshot.getValue(EMinion.class));
+                action.accept(key, dataSnapshot.getValue(EMinion.class));
             } else {
                 ResponseHandler.respond(userId, HttpCodes.NOT_FOUND);
             }

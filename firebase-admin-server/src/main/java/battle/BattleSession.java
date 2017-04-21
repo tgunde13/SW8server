@@ -8,6 +8,7 @@ import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.BattleAvatar;
 import model.BattleState;
+import model.Minion;
 import task.UnhandledValueEventListener;
 
 import java.util.*;
@@ -57,8 +58,7 @@ public class BattleSession {
      * the players are to choose minions.
      */
     public void start() {
-        // Upload state
-        ref.child(FirebaseNodes.BATTLE_STATE).setValue(state);
+        uploadState();
 
         // Upload map for choosing minions
         chosenMovesRef.setValue(getChooseMinionsMap());
@@ -68,6 +68,13 @@ public class BattleSession {
 
         // Start a timeout task
         new BattleTimeoutTask(CHOOSE_MINIONS_TURN, this).schedule();
+    }
+
+    /**
+     * Uploads state to Firebase
+     */
+    private void uploadState() {
+        ref.child(FirebaseNodes.BATTLE_STATE).setValue(state);
     }
 
     /**
@@ -188,7 +195,41 @@ public class BattleSession {
      * @param chosenMoves moves to compute with.
      */
     void computeAndUpdateNextTurn(final Map<String, String> chosenMoves) {
-        // TODO
+        state.advance(chosenMoves);
+
+        uploadState();
+
+        resetMovesFirebase(() -> {
+            // Schedule timeout after resetting to ensure minimum timeout
+            new BattleTimeoutTask(serverTurn, this).schedule();
+        });
+    }
+
+    private void resetMovesFirebase(Runnable action) {
+        final Map<String, Object> chosenMovesMap = new HashMap<>();
+
+        // Add options to choose moves
+        final Map<String, Object> playersMap = new HashMap<>();
+        addChooseMoves(playersMap, state.getTeamOne());
+        addChooseMoves(playersMap, state.getTeamTwo());
+        chosenMovesMap.put(FirebaseNodes.BATTLE_PLAYERS, playersMap);
+
+        // Add turn
+        chosenMovesMap.put(FirebaseNodes.BATTLE_TURN, CHOOSE_MINIONS_TURN);
+
+
+    }
+
+    private void addChooseMoves(final Map<String, Object> playersMap, final List<BattleAvatar> avatars) {
+        for (final BattleAvatar avatar : avatars) {
+            if (avatar.isPlayerControlled()) {
+                for (Minion minion : avatar.getBattleMinions()) {
+                    if (minion.getBattleStats().isAlive()) {
+                        playersMap.put(avatar.getUserId(), minion.);
+                    }
+                }
+            }
+        }
     }
 
     /*private void getPlayerMinions(final Consumer<List<PlayerMinion>> action) {

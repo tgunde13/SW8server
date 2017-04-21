@@ -24,4 +24,12 @@ public class BattleStats {
     public void setCurrentHP(int currentHP) { this.currentHP = currentHP; }
     public void setCurrentPower(int currentPower) { this.currentPower = currentPower; }
     public void setCurrentSpeed(int currentSpeed) { this.currentSpeed = currentSpeed; }
+
+    /**
+     * Gets if this is alive
+     * @return true if, and only if, this is alive
+     */
+    public boolean isAlive() {
+        return currentHP > 0;
+    }
 }

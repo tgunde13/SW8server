@@ -11,7 +11,7 @@ public class Player {
     private int id;
     private Map<String, PlayerMinion> minions;
 
-    public Player(String name, int id) {}
+    public Player(final String name, final int id) {}
 
     private Player() {}
 
@@ -25,9 +25,9 @@ public class Player {
 
     public Map<String, PlayerMinion> getMinions() { return minions; }
 
-    public void setId(int id) { this.id = id; }
+    public void setId(final int id) { this.id = id; }
 
-    public void setName(String name) {this.name = name;}
+    public void setName(final String name) {this.name = name;}
 
-    public void setMinions(Map<String, PlayerMinion> minions) { this.minions = minions; }
+    public void setMinions(final Map<String, PlayerMinion> minions) { this.minions = minions; }
 }

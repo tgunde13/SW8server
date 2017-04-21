@@ -19,7 +19,7 @@ public class Minion {
         //Insert system to read files
     }*/
 
-    public Minion(String name, int health, int speed, int power, int level, String type){
+    public Minion(final String name, final int health, final int speed, final int power, final int level, final String type){
         this.name = name;
         this.health = health;
         this.speed = speed;

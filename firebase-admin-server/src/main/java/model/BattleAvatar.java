@@ -2,40 +2,62 @@ package model;
 
 import com.google.firebase.database.Exclude;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 
 /**
- * Created by Chres on 18-04-2017.
+ * Class representing a battle avatar which is an avatar used during battles. The avatar has a list of minions being used
+ * and a possible userId if the battle avatar is being controlled by a player
  */
 public class BattleAvatar {
-    private List<Minion> battleMinions;
+    private Map<String,Minion> battleMinions;
     private String userId;
 
-    public BattleAvatar(List<PlayerMinion> minions, String playerId){
-        battleMinions = new ArrayList<>();
-
-        this.userId = playerId;
-
-        for(Minion minion : minions){
-            minion.battleStats = new BattleStats(minion);
-            battleMinions.add(minion);
-        }
+    /**
+     * Constructor for creating a battle avatar with a list of minions and a user ID.
+     * @param UserId Id of the user this avatar belongs to.
+     */
+    public BattleAvatar(final String UserId){
+        battleMinions = new HashMap<>();
+        this.userId = UserId;
     }
 
-    public BattleAvatar(EMinion eMinion){
-        battleMinions = new ArrayList<>();
+    /**
+     * Constructor for a battle avatar that does not belong to a player but an environment minion.
+     * @param eMinion is the environment minion that is being fought.
+     */
+    public BattleAvatar(String key, final EMinion eMinion){
+        battleMinions = new HashMap<>();
         eMinion.battleStats = new BattleStats(eMinion);
-        battleMinions.add(eMinion);
+        battleMinions.put(key, eMinion);
     }
 
+
+    /**
+     * Default constructor, used by firebase
+     */
     private BattleAvatar(){
     }
 
-    public List<Minion> getBattleMinions(){ return battleMinions; }
 
+    /**
+     * Getter for battleminions
+     * @return battleMinions
+     */
+    public Map<String,Minion> getBattleMinions(){ return battleMinions; }
+
+
+    /**
+     * Getter for userId
+     * @return userId
+     */
     public String getUserId() { return userId; }
 
+    /**
+     *
+     * @return true if battle avatar is controlled by the player.
+     *         False if it is controlled by the server.
+     */
     @Exclude
     public boolean isPlayerControlled() {
         return userId != null;

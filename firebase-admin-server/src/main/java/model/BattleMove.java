@@ -11,7 +11,7 @@ public class BattleMove {
 
     private int abilityValue;
 
-    public BattleMove(List<Minion> minions, int abilityValue){
+    public BattleMove(final List<Minion> minions, final int abilityValue){
         this.minions = minions;
         this.abilityValue = abilityValue;
     }

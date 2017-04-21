@@ -14,7 +14,7 @@ import java.util.Map;
  * Created by lapiki on 3/13/17.
  */
 public class Main {
-    public static void main(String [] args) throws FileNotFoundException, InterruptedException {
+    public static void main(final String [] args) throws FileNotFoundException, InterruptedException {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
@@ -36,26 +36,26 @@ public class Main {
         //InputStream serviceAccount = ClassLoader.getSystemClassLoader().getResourceAsStream("serviceAccountKey.json");
 
         //For normal build
-        FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
+        final FileInputStream serviceAccount = new FileInputStream("serviceAccountKey.json");
 
         // Initialize the app with a service account, granting admin privileges
-        FirebaseOptions options = new FirebaseOptions.Builder()
+        final FirebaseOptions options = new FirebaseOptions.Builder()
                 .setCredential(FirebaseCredentials.fromCertificate(serviceAccount))
                 .setDatabaseUrl("https://league-of-locations-26618308.firebaseio.com/")
                 .build();
         FirebaseApp.initializeApp(options);
 
         // As an admin, the app has access to read and write all data, regardless of Security Rules
-        DatabaseReference adminRef = FirebaseDatabase
+        final DatabaseReference adminRef = FirebaseDatabase
                 .getInstance()
                 .getReference("restricted_access/secret_document");
         adminRef.addListenerForSingleValueEvent(new ValueEventListener() {
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Object document = dataSnapshot.getValue();
+            public void onDataChange(final DataSnapshot dataSnapshot) {
+                final Object document = dataSnapshot.getValue();
                 System.out.println(document);
             }
 
-            public void onCancelled(DatabaseError databaseError) {
+            public void onCancelled(final DatabaseError databaseError) {
                 //DB fail
             }
         });

@@ -1,0 +1,90 @@
+How to set up generation of the .jar:
+
+File -> Project structure -> Artifacts -> Add -> JAR -> From modules with dependencies
+
+Module: firebase-admin-server_main
+Main Class: Choose the class "Main"
+
+Press "OK"
+
+
+How to generate the .jar:
+
+Go the the class "Main". Find the method "setUpFirebaseAdmin()".
+
+Comment and uncomment the file readers according to the comments.
+
+Build -> Build Artifacts -> firebase-admin-server_main:jar -> Build
+
+
+How to prepare the .jar:
+
+firebase-admin-server_main.jar -> META-INF -> MANIFEST.MF
+
+Add the line "Main-Class: Main"
+
+SW8server -> firebase-admin-server -> serviceAccountKey.json
+
+Copy the file. Then add it to the root of firebase-admin-server_main.jar.
+
+Save and push the new .jar file to the "main" branch of the "SW8server" git repository.
+
+
+How to access the server:
+
+Open PuTTY SSH Client
+
+Host Name (or IP adress): sw807f17.cs.aau.dk
+
+Press Open
+
+
+How to log in the first time:
+
+Username: The string before the "@" in your student e-mail
+Password: The string before the "@" in your student e-mail
+
+Follow the instructions
+
+
+How to shut down the old .jar process:
+
+Enter: ps -ef | grep java
+
+Enter: sudo kill -9 <pid>
+
+Where <pid> is the id for either of the two processes with "firebase-admin-server_main.jar" in the name.
+
+Do this twice such that both processes with "firebase-admin-server_main.jar" in the name are dead.
+
+
+How to get the new .jar file on the server.
+
+In the PuTTY command promt.
+
+Enter: cd /
+
+Enter: home/SW8server
+
+Enter: sudo git pull
+
+Enter your server password if prompted. Then write your github username and password when prompted.
+
+
+How to execute the .jar:
+
+In the PuTTY command promt.
+
+Enter: cd /
+
+Enter: home/SW8server/firebase-admin-server/out/artifacts/firebase_admin_server_main_jar
+
+Enter: sudo nohup java -jar firebase-admin-server_main.jar &
+
+Enter server password if prompted.
+
+
+
+
+
+

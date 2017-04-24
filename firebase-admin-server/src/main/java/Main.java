@@ -19,7 +19,7 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
-        //new Generator().start();
+        new Generator().start();
         TaskManager.start();
 
         Thread.currentThread().join();

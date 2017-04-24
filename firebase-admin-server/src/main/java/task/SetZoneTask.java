@@ -1,6 +1,7 @@
 package task;
 
 import com.google.firebase.database.*;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import model.Zone;
 
@@ -9,7 +10,7 @@ import java.util.function.BiConsumer;
 /**
  * Sets the zone of a player.
  *
- * Fields: REQUEST_DATA: zone of the player (of type Zone).
+ * Fields: TASK_DATA: zone of the player (of type Zone).
  *
  * Expected response codes:
  * OK
@@ -47,12 +48,14 @@ class SetZoneTask extends Task {
         // Get new zone
         final Zone newZone;
         try {
-            newZone = snapshot.child(FirebaseNodes.REQUEST_DATA).getValue(Zone.class);
+            newZone = snapshot.child(FirebaseNodes.TASK_DATA).getValue(Zone.class);
         } catch (final DatabaseException e) {
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }
 
+        // Get old zone (if any) and if player was visible or not from Firebase
+        // Then set the next zone
         read((oldZone, oldVisible) -> setNew(newZone, () -> {
             // If player had no old zone, respond
             if (oldZone == null) {
@@ -71,7 +74,7 @@ class SetZoneTask extends Task {
      */
     private void read(final BiConsumer<Zone, Boolean> action) {
         // Get old player zone (if one exists)
-        playerZoneRef.addListenerForSingleValueEvent(new HandledValueEventListener(userId, zoneSnapshot -> {
+        playerZoneRef.addListenerForSingleValueEvent(new DataChangeListenerAdapter(zoneSnapshot -> {
             final Zone oldZone = zoneSnapshot.getValue(Zone.class);
 
             if (oldZone == null) {
@@ -80,7 +83,7 @@ class SetZoneTask extends Task {
             }
 
             // Get if old data was visible or hidden
-            playerVisibleRef.addListenerForSingleValueEvent(new HandledValueEventListener(userId, visibleSnapshot -> {
+            playerVisibleRef.addListenerForSingleValueEvent(new DataChangeListenerAdapter(visibleSnapshot -> {
                 final Boolean visible = (Boolean) visibleSnapshot.getValue();
                 action.accept(oldZone, visible);
             }));

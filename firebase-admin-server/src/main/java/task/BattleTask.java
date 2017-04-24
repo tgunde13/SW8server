@@ -3,7 +3,7 @@ package task;
 import com.google.firebase.database.DataSnapshot;
 
 /**
- * Created by Tobias on 17/04/2017.
+ * Starts a battle.
  */
 abstract class BattleTask extends Task {
     /**
@@ -12,7 +12,7 @@ abstract class BattleTask extends Task {
      * Creates a failure listener
      * @param snapshot Firebase snapshot of the request
      */
-    BattleTask(DataSnapshot snapshot) {
+    BattleTask(final DataSnapshot snapshot) {
         super(snapshot);
     }
 }

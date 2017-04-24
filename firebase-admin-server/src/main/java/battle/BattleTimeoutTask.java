@@ -5,10 +5,8 @@ import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import task.UnhandledValueEventListener;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.function.Consumer;
 
 /**
  * After TIMEOUT milliseconds,
@@ -20,15 +18,17 @@ class BattleTimeoutTask extends TimerTask {
 
     private final int timeoutTurn;
     private final BattleSession session;
+    private final Consumer<ChosenMoves> action;
 
     /**
      * Constructor.
      * @param timeoutTurn turn to check with after TIMEOUT milliseconds
      * @param session battle session that this belongs to
      */
-    BattleTimeoutTask(final int timeoutTurn, final BattleSession session) {
+    BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<ChosenMoves> action) {
         this.timeoutTurn = timeoutTurn;
         this.session = session;
+        this.action = action;
     }
 
     /**
@@ -41,33 +41,24 @@ class BattleTimeoutTask extends TimerTask {
 
     @Override
     public void run() {
-        // If turns does not match now, return
+        // If turns does not match now,
+        // no need to fetch from Firebase,
+        // We know that this is behind anyway
         if (timeoutTurn != session.getServerTurn()) {
             return;
         }
 
         // Get chosen moves from Firebase
         session.getChosenMovesRef().addListenerForSingleValueEvent(new UnhandledValueEventListener(snapshot -> {
+            final ChosenMoves moves = snapshot.getValue(ChosenMoves.class);
 
-            // Get chosen moves
-            final Map<String, String> chosenMoves = new HashMap<>();
-            for (final DataSnapshot playerSnapshot : snapshot.child(FirebaseNodes.BATTLE_PLAYERS).getChildren()) {
-                for (final DataSnapshot keySnapshot : playerSnapshot.getChildren()) {
-                    final String key = keySnapshot.getValue(String.class);
-
-                    // If a player has not yet chosen, skip that move
-                    if (!key.equals(FirebaseValues.BATTLE_NOT_CHOSEN)) {
-                        chosenMoves.put(playerSnapshot.getKey(), key);
-                    }
-                }
+            // Remove not chosen and skips
+            for (final Map<String, String> playerMoves : moves.getMoves().values()) {
+                playerMoves.values().removeAll(Collections.singleton(FirebaseValues.BATTLE_NOT_CHOSEN));
+                playerMoves.values().removeAll(Collections.singleton(FirebaseValues.BATTLE_SKIP));
             }
 
-            // Advance to next turn with a lock
-            if (!session.tryAdvanceTurn(timeoutTurn)) {
-                return;
-            }
-
-            session.computeAndUpdateNextTurn(chosenMoves);
+            action.accept(moves);
         }));
     }
 }

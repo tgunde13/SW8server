@@ -62,4 +62,19 @@ public class BattleAvatar {
     public boolean isPlayerControlled() {
         return userId != null;
     }
+
+    /**
+     * Gets if this has alive minions.
+     * The minions should have battle stats before calling this.
+     * @return true if, and only if, this has alive minions
+     */
+    boolean hasAliveMinions() {
+        for (final Minion minion : battleMinions.values()) {
+            if (minion.isAlive()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
 }

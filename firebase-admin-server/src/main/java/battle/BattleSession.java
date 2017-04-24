@@ -3,15 +3,18 @@ package battle;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import firebase.DataChangeListener;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.BattleAvatar;
 import model.BattleState;
-import model.Minion;
+import model.Player;
+import model.PlayerMinion;
 import task.UnhandledValueEventListener;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Manages a battle.
@@ -19,14 +22,15 @@ import java.util.*;
 public class BattleSession {
     private static final int CHOOSE_MINIONS_TURN = 0;
     private static final int MIN_MINIONS_PER_PLAYER = 1;
+    private static final String CHOOSE_MINIONS_PREFIX = "player-";
 
     private final BattleState state;
     private final DatabaseReference ref, chosenMovesRef;
 
     private final int maxMinionsPerPlayer;
-    private final Map<String, Object> chooseMinionsMap;
+    private final Map<String, String> chooseMinionsMap;
 
-    private final ValueEventListener listener;
+    private ChoiceListener listener;
 
     private int serverTurn;
 
@@ -41,13 +45,11 @@ public class BattleSession {
 
         chooseMinionsMap = new HashMap<>();
         for (int i = 0; i < maxMinionsPerPlayer; i++) {
-            chooseMinionsMap.put(String.valueOf(i), FirebaseValues.BATTLE_NOT_CHOSEN);
+            chooseMinionsMap.put(CHOOSE_MINIONS_PREFIX + String.valueOf(i), FirebaseValues.BATTLE_NOT_CHOSEN);
         }
 
         ref = FirebaseDatabase.getInstance().getReference(FirebaseNodes.BATTLES).push();
         chosenMovesRef = ref.child(FirebaseNodes.BATTLE_CHOSEN_MOVES);
-
-        listener = getChoiceListener();
 
         serverTurn = CHOOSE_MINIONS_TURN;
     }
@@ -61,13 +63,17 @@ public class BattleSession {
         uploadState();
 
         // Upload map for choosing minions
-        chosenMovesRef.setValue(getChooseMinionsMap());
+        final Map<String, Map<String, String>> moves = new HashMap<>();
+        moves.putAll(getChooseMinionsMap(state.getTeamOne()));
+        moves.putAll(getChooseMinionsMap(state.getTeamTwo()));
+        chosenMovesRef.setValue(new ChosenMoves(CHOOSE_MINIONS_TURN, moves));
 
         // Listen to player choices
+        listener = new ChoiceListener(this::tryAdvanceChooseMinions);
         chosenMovesRef.addValueEventListener(listener);
 
         // Start a timeout task
-        new BattleTimeoutTask(CHOOSE_MINIONS_TURN, this).schedule();
+        new BattleTimeoutTask(CHOOSE_MINIONS_TURN, this, this::tryAdvanceChooseMinions).schedule();
     }
 
     /**
@@ -78,35 +84,20 @@ public class BattleSession {
     }
 
     /**
-     * Gets a map for choosing minions to upload to Firebase.
+     * Gets a map for choosing minions for some avatars.
+     * @param avatars The avatars to map with
      * @return the map
      */
-    private Map<String, Object> getChooseMinionsMap() {
-        final Map<String, Object> chosenMoves = new HashMap<>();
+    private Map<String, Map<String, String>> getChooseMinionsMap(final List<BattleAvatar> avatars) {
+        final Map<String, Map<String, String>> result = new HashMap<>();
 
-        // Add options to choose minions
-        final Map<String, Object> chosenMovesPlayers = new HashMap<>();
-        addChooseMinions(chosenMovesPlayers, state.getTeamOne());
-        addChooseMinions(chosenMovesPlayers, state.getTeamTwo());
-        chosenMoves.put(FirebaseNodes.BATTLE_PLAYERS, chosenMovesPlayers);
-
-        // Add turn
-        chosenMoves.put(FirebaseNodes.BATTLE_TURN, CHOOSE_MINIONS_TURN);
-
-        return chosenMoves;
-    }
-
-    /**
-     * Adds objects to a map for choosing minions.
-     * @param desiredMoves the map to add to
-     * @param avatars the avatars to add from
-     */
-    private void addChooseMinions(final Map<String, Object> desiredMoves, final List<BattleAvatar> avatars) {
         for (final BattleAvatar avatar : avatars) {
             if (avatar.isPlayerControlled()) {
-                desiredMoves.put(avatar.getUserId(), chooseMinionsMap);
+                result.put(avatar.getUserId(), chooseMinionsMap);
             }
         }
+
+        return result;
     }
 
     /**
@@ -134,41 +125,42 @@ public class BattleSession {
     }
 
     /**
-     * Gets listener for player choices.
-     * @return the listener
+     * If the turn of the chosen moves matches the server turn,
+     * this method advances to turn 1
+     * (where players choose moves for their minions).
+     * This method also updates Firebase and schedules a timeout.
+     * @param moves chosen moves
      */
-    private ValueEventListener getChoiceListener() {
-        // Listen to choices
-        return new UnhandledValueEventListener(dataSnapshot -> {
-            final int firebaseTurn = dataSnapshot.child(FirebaseNodes.BATTLE_TURN).getValue(Integer.class);
+    private void tryAdvanceChooseMinions(final ChosenMoves moves) {
+        System.out.println("TOB: BattleSession, tryAdvanceChooseMinions");
+        // Advance to next turn with a lock
+        if (!tryAdvanceTurn(moves.getTurn())) {
+            return;
+        }
 
-            // If turns does not match now, return
-            if (firebaseTurn != serverTurn) {
-                return;
-            }
+        // Switch listener to perform minion moves from now one
+        chosenMovesRef.removeEventListener(listener);
+        listener = new ChoiceListener(this::tryAdvance);
+        chosenMovesRef.addValueEventListener(listener);
 
-            // Get chosen moves
-            final Map<String, String> chosenMoves = new HashMap<>();
-            for (final DataSnapshot playerSnapshot : dataSnapshot.child(FirebaseNodes.BATTLE_PLAYERS).getChildren()) {
-                for (final DataSnapshot keySnapshot : playerSnapshot.getChildren()) {
-                    final String key = keySnapshot.getValue(String.class);
+        chooseMinions(moves.getMoves(), this::updateFirebaseAndSchedule);
+    }
 
-                    // If a player has not yet chosen, return
-                    if (key.equals(FirebaseValues.BATTLE_NOT_CHOSEN)) {
-                        return;
-                    }
+    /**
+     * If the turn of the chosen moves matches the server turn,
+     * this method advance to the next turn.
+     * This method also updates Firebase and schedules a timeout.
+     * @param moves chosen moves
+     */
+    private void tryAdvance(final ChosenMoves moves) {
+        // Advance to next turn with a lock
+        if (!tryAdvanceTurn(moves.getTurn())) {
+            return;
+        }
 
-                    chosenMoves.put(playerSnapshot.getKey(), key);
-                }
-            }
+        state.advance(moves.getMoves());
 
-            // Advance to next turn with a lock
-            if (!tryAdvanceTurn(firebaseTurn)) {
-                return;
-            }
-
-            computeAndUpdateNextTurn(chosenMoves);
-        });
+        updateFirebaseAndSchedule();
     }
 
     /**
@@ -178,101 +170,77 @@ public class BattleSession {
      * @param testTurn turn to test with
      * @return true if, and only if, the turns matched
      */
-    synchronized boolean tryAdvanceTurn(final int testTurn) {
+    private synchronized boolean tryAdvanceTurn(final int testTurn) {
         if (serverTurn != testTurn) {
+            System.out.println("TOB: BattleSession, tryAdvanceTurn, false");
             return false;
         }
 
         serverTurn++;
+        System.out.println("TOB: BattleSession, tryAdvanceTurn, true");
         return true;
     }
 
     /**
-     * Computes the next turn.
-     * Updates Firebase.
+     * Updates state on Firebase.
      * Resets chosen moves on Firebase.
      * Schedules a new timeout.
-     * @param chosenMoves moves to compute with.
      */
-    void computeAndUpdateNextTurn(final Map<String, String> chosenMoves) {
-        state.advance(chosenMoves);
-
+    private void updateFirebaseAndSchedule() {
+        System.out.println("TOB: BattleSession, updateFirebaseAndSchedule");
         uploadState();
 
-        resetMovesFirebase(() -> {
+        chosenMovesRef.setValue(new ChosenMoves(serverTurn, state)).addOnSuccessListener(aVoid -> {
+            // If if game is over
+            if (state.isOver()) {
+                // Stop listening
+                chosenMovesRef.removeEventListener(listener);
+                System.out.println("TOB: BattleSession, updateFirebaseAndSchedule, game is over");
+                return;
+            }
+
             // Schedule timeout after resetting to ensure minimum timeout
-            new BattleTimeoutTask(serverTurn, this).schedule();
+            new BattleTimeoutTask(serverTurn, this, this::tryAdvance).schedule();
         });
     }
 
-    private void resetMovesFirebase(Runnable action) {
-        final Map<String, Object> chosenMovesMap = new HashMap<>();
+    private void chooseMinions(final Map<String, Map<String, String>> allPlayersChoices, final Runnable action) {
+        System.out.println("TOB: BattleSession, chooseMinions");
 
-        // Add options to choose moves
-        final Map<String, Object> playersMap = new HashMap<>();
-        addChooseMoves(playersMap, state.getTeamOne());
-        addChooseMoves(playersMap, state.getTeamTwo());
-        chosenMovesMap.put(FirebaseNodes.BATTLE_PLAYERS, playersMap);
+        // Count moves
+        int count = 0;
+        for (final Map<String, String> aPlayerChoices : allPlayersChoices.values()) {
+            count += aPlayerChoices.size();
+        }
 
-        // Add turn
-        chosenMovesMap.put(FirebaseNodes.BATTLE_TURN, CHOOSE_MINIONS_TURN);
+        final SynchronizedCountdown countdown = new SynchronizedCountdown(count, action);
 
+        for (final Map.Entry<String, Map<String, String>> playerChoices : allPlayersChoices.entrySet()) {
+            final String playerKey = playerChoices.getKey();
 
-    }
-
-    private void addChooseMoves(final Map<String, Object> playersMap, final List<BattleAvatar> avatars) {
-        for (final BattleAvatar avatar : avatars) {
-            if (avatar.isPlayerControlled()) {
-                for (Minion minion : avatar.getBattleMinions()) {
-                    if (minion.getBattleStats().isAlive()) {
-                        playersMap.put(avatar.getUserId(), minion.);
-                    }
+            for (final String minionKey : playerChoices.getValue().values()) {
+                // If player chose to skip or has not chosen, continue
+                if (minionKey.equals(FirebaseValues.BATTLE_SKIP) || minionKey.equals(FirebaseValues.BATTLE_NOT_CHOSEN)) {
+                    countdown.step();
+                    continue;
                 }
+
+                FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(playerKey)
+                        .child(FirebaseNodes.PLAYER_MINIONS).child(minionKey)
+                        .addListenerForSingleValueEvent(new UnhandledValueEventListener(dataSnapshot -> {
+                            // If minion was not found, ignore
+                            if (!dataSnapshot.exists()) {
+                                System.out.println("TOB: BattleSession, chooseMinions, !dataSnapshot.exists(), minionKey: " + minionKey);
+                                countdown.step();
+                                return;
+                            }
+
+                            final PlayerMinion minion = dataSnapshot.getValue(PlayerMinion.class);
+                            minion.createBattleStats();
+                            state.addSynchronized(playerKey, minionKey, minion);
+                            countdown.step();
+                        }));
             }
         }
     }
-
-    /*private void getPlayerMinions(final Consumer<List<PlayerMinion>> action) {
-        // Get minion keys
-        final List<String> keys = new ArrayList<>();
-        for (final DataSnapshot child : snapshot.child(FirebaseNodes.TASK_MINIONS).getChildren()) {
-            try {
-                keys.add(child.getValue(String.class));
-            } catch (final DatabaseException e) {
-                // TODO Test
-                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-                return;
-            }
-        }
-
-        if (keys.size() < MIN_MINIONS || keys.size() > MAX_MINIONS) {
-            ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-            return;
-        }
-
-        getPlayerMinionsHelper(keys, new ArrayList<>(), action);
-    }
-
-    private void getPlayerMinionsHelper(final List<String> keys, final List<PlayerMinion> minions, final Consumer<List<PlayerMinion>> action) {
-        if (keys.isEmpty()) {
-            action.accept(minions);
-        }
-
-        FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(userId)
-        .child(FirebaseNodes.PLAYER_MINIONS).child(keys.get(0))
-        .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
-            // Check if key from client is valid
-            if (!dataSnapshot.exists()) {
-                // TODO Test
-                ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
-                return;
-            }
-
-            // Remove key and add minion
-            keys.remove(0);
-            minions.add(dataSnapshot.getValue(PlayerMinion.class));
-
-            getPlayerMinionsHelper(keys, minions, action);
-        }));
-    }*/
 }

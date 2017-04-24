@@ -10,4 +10,5 @@ public class FirebaseValues {
 
     // Battle
     public static final String BATTLE_NOT_CHOSEN = "notChosen";
+    public static final String BATTLE_SKIP = "skip";
 }

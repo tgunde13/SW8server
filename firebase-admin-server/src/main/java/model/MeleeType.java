@@ -13,7 +13,7 @@ import java.util.Map;
 
 public class MeleeType extends Type {
 
-    MeleeType(){ id = "Melee"; }
+    public MeleeType(){ id = "Melee"; }
 
 
     /**
@@ -53,13 +53,12 @@ public class MeleeType extends Type {
                 for (BattleAvatar battleAvatarTeamTwo: battleState.getTeamTwo()) {
                     targets.putAll(battleAvatarTeamTwo.getBattleMinions());
                 }
-            } else {
-                for (BattleAvatar battleAvatarTeamOne: battleState.getTeamOne()) {
-                    targets.putAll(battleAvatarTeamOne.getBattleMinions());
-                }
+                return targets;
             }
         }
-
+        for (BattleAvatar battleAvatarTeamOne: battleState.getTeamOne()) {
+            targets.putAll(battleAvatarTeamOne.getBattleMinions());
+        }
         return targets;
     }
 }

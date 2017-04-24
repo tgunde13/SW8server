@@ -2,12 +2,9 @@ package battle;
 
 import com.google.firebase.database.DataSnapshot;
 import firebase.DataChangeListener;
-import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 
-import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Consumer;
 

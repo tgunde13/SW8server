@@ -1,6 +1,7 @@
 package task;
 
 import com.google.firebase.database.*;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import model.Zone;
 
@@ -73,7 +74,7 @@ class SetZoneTask extends Task {
      */
     private void read(final BiConsumer<Zone, Boolean> action) {
         // Get old player zone (if one exists)
-        playerZoneRef.addListenerForSingleValueEvent(new HandledValueEventListener(userId, zoneSnapshot -> {
+        playerZoneRef.addListenerForSingleValueEvent(new DataChangeListenerAdapter(zoneSnapshot -> {
             final Zone oldZone = zoneSnapshot.getValue(Zone.class);
 
             if (oldZone == null) {
@@ -82,7 +83,7 @@ class SetZoneTask extends Task {
             }
 
             // Get if old data was visible or hidden
-            playerVisibleRef.addListenerForSingleValueEvent(new HandledValueEventListener(userId, visibleSnapshot -> {
+            playerVisibleRef.addListenerForSingleValueEvent(new DataChangeListenerAdapter(visibleSnapshot -> {
                 final Boolean visible = (Boolean) visibleSnapshot.getValue();
                 action.accept(oldZone, visible);
             }));

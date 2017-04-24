@@ -1,9 +1,7 @@
 package battle;
 
-import com.google.firebase.database.DataSnapshot;
-import firebase.FirebaseNodes;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseValues;
-import task.UnhandledValueEventListener;
 
 import java.util.*;
 import java.util.function.Consumer;
@@ -24,6 +22,7 @@ class BattleTimeoutTask extends TimerTask {
      * Constructor.
      * @param timeoutTurn turn to check with after TIMEOUT milliseconds
      * @param session battle session that this belongs to
+     * @param action action to call in order to advance
      */
     BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<ChosenMoves> action) {
         this.timeoutTurn = timeoutTurn;
@@ -49,7 +48,7 @@ class BattleTimeoutTask extends TimerTask {
         }
 
         // Get chosen moves from Firebase
-        session.getChosenMovesRef().addListenerForSingleValueEvent(new UnhandledValueEventListener(snapshot -> {
+        session.getChosenMovesRef().addListenerForSingleValueEvent(new DataChangeListenerAdapter(snapshot -> {
             final ChosenMoves moves = snapshot.getValue(ChosenMoves.class);
 
             // Remove not chosen and skips

@@ -1,16 +1,13 @@
 package battle;
 
-import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import firebase.DataChangeListener;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.BattleAvatar;
 import model.BattleState;
-import model.Player;
 import model.PlayerMinion;
-import task.UnhandledValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -21,13 +18,11 @@ import java.util.Map;
  */
 public class BattleSession {
     private static final int CHOOSE_MINIONS_TURN = 0;
-    private static final int MIN_MINIONS_PER_PLAYER = 1;
     private static final String CHOOSE_MINIONS_PREFIX = "player-";
 
     private final BattleState state;
     private final DatabaseReference ref, chosenMovesRef;
 
-    private final int maxMinionsPerPlayer;
     private final Map<String, String> chooseMinionsMap;
 
     private ChoiceListener listener;
@@ -41,7 +36,6 @@ public class BattleSession {
      */
     public BattleSession(final BattleState state, final int maxMinionsPerPlayer) {
         this.state = state;
-        this.maxMinionsPerPlayer = maxMinionsPerPlayer;
 
         chooseMinionsMap = new HashMap<>();
         for (int i = 0; i < maxMinionsPerPlayer; i++) {
@@ -134,7 +128,8 @@ public class BattleSession {
     private void tryAdvanceChooseMinions(final ChosenMoves moves) {
         System.out.println("TOB: BattleSession, tryAdvanceChooseMinions");
         // Advance to next turn with a lock
-        if (!tryAdvanceTurn(moves.getTurn())) {
+        final boolean succeeded = tryAdvanceTurn(moves.getTurn());
+        if (!succeeded) {
             return;
         }
 
@@ -154,7 +149,8 @@ public class BattleSession {
      */
     private void tryAdvance(final ChosenMoves moves) {
         // Advance to next turn with a lock
-        if (!tryAdvanceTurn(moves.getTurn())) {
+        final boolean succeeded = tryAdvanceTurn(moves.getTurn());
+        if (!succeeded) {
             return;
         }
 
@@ -204,6 +200,12 @@ public class BattleSession {
         });
     }
 
+    /**
+     * Starts choosing minions from player choices.
+     * When done, an action is called.
+     * @param allPlayersChoices player choices
+     * @param action action to call
+     */
     private void chooseMinions(final Map<String, Map<String, String>> allPlayersChoices, final Runnable action) {
         System.out.println("TOB: BattleSession, chooseMinions");
 
@@ -227,7 +229,7 @@ public class BattleSession {
 
                 FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(playerKey)
                         .child(FirebaseNodes.PLAYER_MINIONS).child(minionKey)
-                        .addListenerForSingleValueEvent(new UnhandledValueEventListener(dataSnapshot -> {
+                        .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
                             // If minion was not found, ignore
                             if (!dataSnapshot.exists()) {
                                 System.out.println("TOB: BattleSession, chooseMinions, !dataSnapshot.exists(), minionKey: " + minionKey);

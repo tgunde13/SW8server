@@ -2,6 +2,7 @@ package task;
 
 import battle.BattleSession;
 import com.google.firebase.database.*;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.*;
@@ -11,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Starts a solo PvE battle
@@ -85,7 +85,7 @@ class SoloPveBattleTask extends BattleTask {
 
         FirebaseDatabase.getInstance().getReference(FirebaseNodes.ENVIRONMENT_SQUADS)
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
-        .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
+        .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
             if (dataSnapshot.exists()) {
                 action.accept(key, dataSnapshot.getValue(EMinion.class));
             } else {

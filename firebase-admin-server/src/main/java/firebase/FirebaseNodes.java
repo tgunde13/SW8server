@@ -31,8 +31,6 @@ public class FirebaseNodes {
     public static final String BATTLES = "battles";
     public static final String BATTLE_CHOSEN_MOVES = "chosenMoves";
     public static final String BATTLE_STATE = "state";
-    public static final String BATTLE_TURN = "turn";
-    public static final String BATTLE_PLAYERS = "players";
 
     // Player zone index
     public static final String VISIBLE_PLAYER_ZONE_INDEX = "playerZoneIndex";

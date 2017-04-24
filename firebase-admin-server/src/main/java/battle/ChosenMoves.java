@@ -1,6 +1,5 @@
 package battle;
 
-import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.BattleAvatar;
 import model.BattleState;

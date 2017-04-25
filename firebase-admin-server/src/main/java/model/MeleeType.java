@@ -22,7 +22,7 @@ public class MeleeType extends Type {
      * @param move battleMove that represents the move we want to check for
      * @return true if the move is legal or false if the move is illegal
      */
-    public boolean isLegal(BattleState battleState,BattleMove move){
+    public boolean isLegal(BattleState battleState, BattleMove move){
         String casterKey = move.getMinionKeys().get(0);
         move.getMinionKeys().remove(0);
         ArrayList<String> targetKeys = new ArrayList<>();

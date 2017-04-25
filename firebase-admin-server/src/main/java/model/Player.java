@@ -11,7 +11,10 @@ public class Player {
     private int id;
     private Map<String, PlayerMinion> minions;
 
-    public Player(final String name, final int id) {}
+    public Player(final String name, final int id) {
+        this.name = name;
+        this.id = id;
+    }
 
     private Player() {}
 

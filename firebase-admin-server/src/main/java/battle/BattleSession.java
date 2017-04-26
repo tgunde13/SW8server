@@ -18,7 +18,7 @@ import java.util.Map;
  */
 public class BattleSession {
     private static final int CHOOSE_MINIONS_TURN = 0;
-    private static final String CHOOSE_MINIONS_PREFIX = "player-";
+    private static final String CHOOSE_MINIONS_PREFIX = "minion-";
 
     private final BattleState state;
     private final DatabaseReference ref, chosenMovesRef;
@@ -60,7 +60,7 @@ public class BattleSession {
         final Map<String, Map<String, String>> moves = new HashMap<>();
         moves.putAll(getChooseMinionsMap(state.getTeamOne()));
         moves.putAll(getChooseMinionsMap(state.getTeamTwo()));
-        chosenMovesRef.setValue(new ChosenMoves(CHOOSE_MINIONS_TURN, moves));
+        chosenMovesRef.setValue(new PlayersChoices<>(CHOOSE_MINIONS_TURN, moves));
 
         // Listen to player choices
         listener = new ChoiceListener(this::tryAdvanceChooseMinions);
@@ -125,7 +125,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvanceChooseMinions(final ChosenMoves moves) {
+    private void tryAdvanceChooseMinions(final PlayersChoices<String> moves) {
         System.out.println("TOB: BattleSession, tryAdvanceChooseMinions");
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
@@ -147,7 +147,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvance(final ChosenMoves moves) {
+    private void tryAdvance(final PlayersChoices<List<ChosenMovePart>> moves) {
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
         if (!succeeded) {
@@ -186,7 +186,7 @@ public class BattleSession {
         System.out.println("TOB: BattleSession, updateFirebaseAndSchedule");
         uploadState();
 
-        chosenMovesRef.setValue(new ChosenMoves(serverTurn, state)).addOnSuccessListener(aVoid -> {
+        chosenMovesRef.setValue(new AvailablePlayersChoices(serverTurn, state)).addOnSuccessListener(aVoid -> {
             // If if game is over
             if (state.isOver()) {
                 // Stop listening

@@ -1,5 +1,8 @@
 package model;
 
+import battle.ChosenMove;
+
+import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -46,10 +49,21 @@ public class BattleState implements Iterable<BattleAvatar> {
         return true;
     }
 
-    public void advance(final Map<String, Map<String, String>> chosenMoves) {
+    /**
+     * Advances to the next turn by performance moves.
+     * @param chosenMoves the moves to perform
+     */
+    public void advance(final Map<String, Map<String, ChosenMove>> chosenMoves) {
         // TODO
+
     }
 
+    /**
+     * Add a player minion synchronized.
+     * @param playerKey key of player controlling the minion
+     * @param minionKey key of the minion to add
+     * @param minion minion to add
+     */
     public synchronized void addSynchronized(final String playerKey, final String minionKey, final PlayerMinion minion) {
         for (final BattleAvatar avatar : this) {
             if (avatar.isPlayerControlled() && avatar.getUserId().equals(playerKey)) {
@@ -62,6 +76,7 @@ public class BattleState implements Iterable<BattleAvatar> {
     }
 
     @Override
+    @Nonnull
     public Iterator<BattleAvatar> iterator() {
         final List<BattleAvatar> avatars = new ArrayList<>();
         avatars.addAll(teamOne);

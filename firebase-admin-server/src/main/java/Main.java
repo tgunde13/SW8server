@@ -1,11 +1,8 @@
-import battle.ChosenMoves;
+import battle.PlayersChoices;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
-import firebase.FirebaseNodes;
-import model.EMinion;
-import task.TaskManager;
 
 import java.io.*;
 import java.util.HashMap;
@@ -19,8 +16,19 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
-        new Generator().start();
-        TaskManager.start();
+        //new Generator().start();
+        //TaskManager.start();
+
+
+        Map<String, Map<String, MinionChoice>> map = new HashMap<>();
+        Map<String, MinionChoice> a1 = new HashMap<>();
+        a1.put("m11", new MinionChoice(null, null, avatarKey, true));
+        map.put("a1", a1);
+        FirebaseDatabase.getInstance().getReference("a").setValue(new PlayersChoices(10, map));
+
+
+
+        //FirebaseDatabase.getInstance().getReference("a").addListenerForSingleValueEvent(new ChosenMoveListener(playerChoices -> {}));
 
         Thread.currentThread().join();
     }

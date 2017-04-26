@@ -3,6 +3,7 @@ package battle;
 import com.google.firebase.database.DataSnapshot;
 import firebase.DataChangeListener;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -10,31 +11,32 @@ import java.util.function.Consumer;
  * Whenever a data change is accepted, an action is called.
  * A data change is accepted if all players have chosen a move for all their minions.
  */
-class ChoiceListener extends DataChangeListener {
-    private final Consumer<PlayersChoices> action;
+public class ChoiceListener extends DataChangeListener {
+    private final Consumer<PlayerChoices> action;
 
     /**
      * Constructor
      * @param action action to call whenever a data change is accepted
      */
-    ChoiceListener(final Consumer<PlayersChoices> action) {
+    public ChoiceListener(final Consumer<PlayerChoices> action) {
         this.action = action;
     }
 
     @Override
     public void onDataChange(final DataSnapshot dataSnapshot) {
-        final PlayersChoices moves = dataSnapshot.getValue(PlayersChoices.class);
+        System.out.println("TOB: ChoiceListener, run");
 
-        /*for (final Map<String, String> playerMoves : moves.getMoves().values()) {
-            // If a move is not chosen, abort
-            if (playerMoves.containsValue(FirebaseValues.BATTLE_NOT_CHOSEN)) {
-                return;
+        final PlayerChoices choices = dataSnapshot.getValue(PlayerChoices.class);
+
+        // If a move is not chosen, abort
+        for (final Map<String, ChosenMove> playerMoves: choices.getMoves().values()) {
+            for (final ChosenMove move : playerMoves.values()) {
+                if (move.isAvailable()) {
+                    return;
+                }
             }
+        }
 
-            // Remove skips
-            playerMoves.values().removeAll(Collections.singleton(FirebaseValues.BATTLE_SKIP));
-        }*/
-
-        action.accept(moves);
+        action.accept(choices);
     }
 }

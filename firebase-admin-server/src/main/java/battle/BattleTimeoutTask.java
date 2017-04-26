@@ -15,7 +15,7 @@ class BattleTimeoutTask extends TimerTask {
 
     private final int timeoutTurn;
     private final BattleSession session;
-    private final Consumer<PlayersChoices> action;
+    private final Consumer<PlayerChoices> action;
 
     /**
      * Constructor.
@@ -23,7 +23,7 @@ class BattleTimeoutTask extends TimerTask {
      * @param session battle session that this belongs to
      * @param action action to call in order to advance
      */
-    BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<PlayersChoices> action) {
+    BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<PlayerChoices> action) {
         this.timeoutTurn = timeoutTurn;
         this.session = session;
         this.action = action;
@@ -39,6 +39,8 @@ class BattleTimeoutTask extends TimerTask {
 
     @Override
     public void run() {
+        System.out.println("TOB: BattleTimeoutTask, run");
+
         // If turns does not match now,
         // no need to fetch from Firebase,
         // We know that this is behind anyway
@@ -48,13 +50,12 @@ class BattleTimeoutTask extends TimerTask {
 
         // Get chosen moves from Firebase
         session.getChosenMovesRef().addListenerForSingleValueEvent(new DataChangeListenerAdapter(snapshot -> {
-            final PlayersChoices moves = snapshot.getValue(PlayersChoices.class);
+            final PlayerChoices moves = snapshot.getValue(PlayerChoices.class);
 
-            // Remove not chosen and skips
-            /*final Map<String, String> playerMoves : moves.getMoves().values()) {
-                playerMoves.values().removeAll(Collections.singleton(FirebaseValues.BATTLE_NOT_CHOSEN));
-                playerMoves.values().removeAll(Collections.singleton(FirebaseValues.BATTLE_SKIP));
-            }*/
+            // Remove not chosen moves
+            for (final Map<String, ChosenMove> playerMoves: moves.getMoves().values()) {
+                playerMoves.values().removeIf(ChosenMove::isAvailable);
+            }
 
             action.accept(moves);
         }));

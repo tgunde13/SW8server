@@ -7,19 +7,19 @@ import java.util.List;
  */
 public class BattleMove {
     //First minion in list is the minion doing the move, the rest are targets
-    private List<Minion> minions;
+    private List<String> minionKeys;
 
     private int abilityValue;
 
-    public BattleMove(final List<Minion> minions, final int abilityValue){
-        this.minions = minions;
+    public BattleMove(final List<String> minionKeys, final int abilityValue){
+        this.minionKeys = minionKeys;
         this.abilityValue = abilityValue;
     }
 
     private BattleMove(){
     }
 
-    public List<Minion> getMinions() { return minions;}
+    public List<String> getMinionKeys() { return minionKeys;}
 
     public int getAbilityValue() {return abilityValue;}
 }

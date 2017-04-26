@@ -5,25 +5,20 @@ import com.google.firebase.database.FirebaseDatabase;
 import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
-import model.BattleAvatar;
 import model.BattleState;
 import model.PlayerMinion;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Manages a battle.
  */
 public class BattleSession {
-    private static final int CHOOSE_MINIONS_TURN = 0;
-    private static final String CHOOSE_MINIONS_PREFIX = "minion-";
+    static final int CHOOSE_MINIONS_TURN = 0;
 
     private final BattleState state;
+    private int maxMinionsPerPlayer;
     private final DatabaseReference ref, chosenMovesRef;
-
-    private final Map<String, String> chooseMinionsMap;
 
     private ChoiceListener listener;
 
@@ -36,11 +31,7 @@ public class BattleSession {
      */
     public BattleSession(final BattleState state, final int maxMinionsPerPlayer) {
         this.state = state;
-
-        chooseMinionsMap = new HashMap<>();
-        for (int i = 0; i < maxMinionsPerPlayer; i++) {
-            chooseMinionsMap.put(CHOOSE_MINIONS_PREFIX + String.valueOf(i), FirebaseValues.BATTLE_NOT_CHOSEN);
-        }
+        this.maxMinionsPerPlayer = maxMinionsPerPlayer;
 
         ref = FirebaseDatabase.getInstance().getReference(FirebaseNodes.BATTLES).push();
         chosenMovesRef = ref.child(FirebaseNodes.BATTLE_CHOSEN_MOVES);
@@ -57,10 +48,7 @@ public class BattleSession {
         uploadState();
 
         // Upload map for choosing minions
-        final Map<String, Map<String, String>> moves = new HashMap<>();
-        moves.putAll(getChooseMinionsMap(state.getTeamOne()));
-        moves.putAll(getChooseMinionsMap(state.getTeamTwo()));
-        chosenMovesRef.setValue(new PlayersChoices<>(CHOOSE_MINIONS_TURN, moves));
+        chosenMovesRef.setValue(new AvailableMinionChoices(state, maxMinionsPerPlayer));
 
         // Listen to player choices
         listener = new ChoiceListener(this::tryAdvanceChooseMinions);
@@ -75,23 +63,6 @@ public class BattleSession {
      */
     private void uploadState() {
         ref.child(FirebaseNodes.BATTLE_STATE).setValue(state);
-    }
-
-    /**
-     * Gets a map for choosing minions for some avatars.
-     * @param avatars The avatars to map with
-     * @return the map
-     */
-    private Map<String, Map<String, String>> getChooseMinionsMap(final List<BattleAvatar> avatars) {
-        final Map<String, Map<String, String>> result = new HashMap<>();
-
-        for (final BattleAvatar avatar : avatars) {
-            if (avatar.isPlayerControlled()) {
-                result.put(avatar.getUserId(), chooseMinionsMap);
-            }
-        }
-
-        return result;
     }
 
     /**
@@ -125,7 +96,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvanceChooseMinions(final PlayersChoices<String> moves) {
+    private void tryAdvanceChooseMinions(final PlayerChoices moves) {
         System.out.println("TOB: BattleSession, tryAdvanceChooseMinions");
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
@@ -147,7 +118,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvance(final PlayersChoices<List<ChosenMovePart>> moves) {
+    private void tryAdvance(final PlayerChoices moves) {
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
         if (!succeeded) {
@@ -186,7 +157,7 @@ public class BattleSession {
         System.out.println("TOB: BattleSession, updateFirebaseAndSchedule");
         uploadState();
 
-        chosenMovesRef.setValue(new AvailablePlayersChoices(serverTurn, state)).addOnSuccessListener(aVoid -> {
+        chosenMovesRef.setValue(new AvailableMoves(serverTurn, state)).addOnSuccessListener(aVoid -> {
             // If if game is over
             if (state.isOver()) {
                 // Stop listening
@@ -206,43 +177,69 @@ public class BattleSession {
      * @param allPlayersChoices player choices
      * @param action action to call
      */
-    private void chooseMinions(final Map<String, Map<String, String>> allPlayersChoices, final Runnable action) {
+    private void chooseMinions(final Map<String, Map<String, ChosenMove>> allPlayersChoices, final Runnable action) {
         System.out.println("TOB: BattleSession, chooseMinions");
 
         // Count moves
         int count = 0;
-        for (final Map<String, String> aPlayerChoices : allPlayersChoices.values()) {
+        for (final Map<String, ChosenMove> aPlayerChoices : allPlayersChoices.values()) {
             count += aPlayerChoices.size();
         }
 
         final SynchronizedCountdown countdown = new SynchronizedCountdown(count, action);
 
-        for (final Map.Entry<String, Map<String, String>> playerChoices : allPlayersChoices.entrySet()) {
+        // Go through the players involved
+        for (final Map.Entry<String, Map<String, ChosenMove>> playerChoices : allPlayersChoices.entrySet()) {
             final String playerKey = playerChoices.getKey();
 
-            for (final String minionKey : playerChoices.getValue().values()) {
-                // If player chose to skip or has not chosen, continue
-                if (minionKey.equals(FirebaseValues.BATTLE_SKIP) || minionKey.equals(FirebaseValues.BATTLE_NOT_CHOSEN)) {
-                    countdown.step();
-                    continue;
-                }
+            // If player has duplicate minions (tries to cheat), skip
+            final Collection<ChosenMove> playerMoves = playerChoices.getValue().values();
+            if (containDuplicateMinionKeys(playerMoves)) {
+                // TODO Test
+                System.out.println("TOB: BattleSession, containDuplicateMinionKeys(playerMoves)");
+                countdown.step(playerMoves.size());
+                continue;
+            }
 
+            // Go through a player's chosen minions
+            for (final ChosenMove move : playerMoves) {
                 FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(playerKey)
-                        .child(FirebaseNodes.PLAYER_MINIONS).child(minionKey)
+                        .child(FirebaseNodes.PLAYER_MINIONS).child(move.getMinionKey())
                         .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
                             // If minion was not found, ignore
                             if (!dataSnapshot.exists()) {
-                                System.out.println("TOB: BattleSession, chooseMinions, !dataSnapshot.exists(), minionKey: " + minionKey);
+                                // TODO Test
+                                System.out.println("TOB: BattleSession, chooseMinions, !dataSnapshot.exists(), minionKey: " + move.getMinionKey());
                                 countdown.step();
                                 return;
                             }
 
+                            // Add to state
                             final PlayerMinion minion = dataSnapshot.getValue(PlayerMinion.class);
                             minion.createBattleStats();
-                            state.addSynchronized(playerKey, minionKey, minion);
+                            state.addSynchronized(playerKey, move.getMinionKey(), minion);
                             countdown.step();
                         }));
             }
         }
+    }
+
+    /**
+     * Gets if a collection of moves contains duplicate minion keys.
+     * @param moves the collection to check
+     * @return true if, and only if, the collection contains duplicate minion keys
+     */
+    private static boolean containDuplicateMinionKeys(final Collection<ChosenMove> moves) {
+        final Set<String> keys = new HashSet<>();
+
+        for (final ChosenMove move : moves) {
+            // If keys already contained the new key,
+            // return true, since duplicate was found
+            if (!keys.add(move.getMinionKey())) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

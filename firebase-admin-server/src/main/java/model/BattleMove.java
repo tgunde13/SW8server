@@ -1,25 +1,21 @@
 package model;
 
-import java.util.List;
-
-/**
- * Created by Chres on 18-04-2017.
- */
 public class BattleMove {
-    //First minion in list is the minion doing the move, the rest are targets
-    private List<String> minionKeys;
+    private BattleMinionIdentifier attackingMinionKey;
+    private BattleMinionIdentifier targetMinionKey;
+    private String abilityValue;
 
-    private int abilityValue;
-
-    public BattleMove(final List<String> minionKeys, final int abilityValue){
-        this.minionKeys = minionKeys;
+    public BattleMove(final BattleMinionIdentifier attackingMinionKey, final BattleMinionIdentifier targetMinionKeys, String abilityValue){
+        this.attackingMinionKey = attackingMinionKey;
+        this.targetMinionKey = targetMinionKeys;
         this.abilityValue = abilityValue;
+
     }
 
     private BattleMove(){
     }
 
-    public List<String> getMinionKeys() { return minionKeys;}
+    public BattleMinionIdentifier getAttacker(){ return  attackingMinionKey;}
 
-    public int getAbilityValue() {return abilityValue;}
+    public BattleMinionIdentifier getTarget() { return targetMinionKey;}
 }

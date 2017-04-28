@@ -14,6 +14,7 @@ public class Minion {
     protected int level;
     protected String type;
     protected BattleStats battleStats;
+    protected Type typeClass;
 
     /*public Minion(String fileName){
         //Insert system to read files
@@ -26,6 +27,13 @@ public class Minion {
         this.power = power;
         this.level = level;
         this.type = type;
+    }
+
+    public void assignTypeClass(){
+        switch (type){
+            case "melee":
+                typeClass = new MeleeType();
+        }
     }
 
     public Minion() {}

@@ -7,8 +7,9 @@ import java.util.Random;
  */
 public class EMinion extends Minion {
     private static final int MAX_LEVEL = 50;
-    private double lon;
-    private double lat;
+    private final double lon;
+    private final double lat;
+    private final int size;
 
     /**
      * Constructs a map minion with a given coordinate.
@@ -16,17 +17,32 @@ public class EMinion extends Minion {
      * @param lat the latitude of the minion
      * @param lon the longitude of the minion
      */
-    public EMinion(final double lat, final double lon) {
+    public EMinion(final double lat, final double lon, int size, String name, int health, int speed, int power, int level, String type) {
+        super(name, health, speed, power, level, type);
         this.lat = lat;
         this.lon = lon;
-
-        generateEMinionData();
+        this.size = size;
     }
 
-    public void generateEMinionData() {
+    public static EMinion generateEMinionData(double lat, double lon) {
+
+        int level;
+        int size;
+        String name;
+        String type;
+        int health;
+        int speed;
+        int power;
+
 
         level = new Random().nextInt(MAX_LEVEL) + 1;
-
+        if(level < 10){
+            size = 1;
+        } else if(level < 20){
+            size = 2;
+        } else {
+            size = 3;
+        }
         switch (new Random().nextInt(2)) {
             case 0:
                 name = "Swordman";
@@ -41,12 +57,23 @@ public class EMinion extends Minion {
                 health = 200*level;
                 speed = 10;
                 power = 20*level;
-
+                break;
+            default:
+                name = "Unknown";
+                type = "Melee";
+                health = 1*level;
+                speed = 1;
+                power = 1*level;
                 break;
         }
+        return new EMinion(lat, lon, size, name, health, speed, power, level, type);
     }
 
-    public EMinion() {}
+    private EMinion() {
+        lon = 0;
+        lat = 0;
+        size = 0;
+    }
 
     public double getLon(){
         return lon;
@@ -55,8 +82,7 @@ public class EMinion extends Minion {
     public double getLat(){
         return lat;
     }
-
-    public void setLat(final double lat) { this.lat = lat; }
-
-    public void setLon(final double lon) {this.lon = lon;}
+    public int getSize(){
+        return size;
+    }
 }

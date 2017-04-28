@@ -2,15 +2,11 @@ package model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
- * Created by Chres on 18-04-2017.
+ * Melee type for minions
  */
-
-
-
 public class MeleeType extends Type {
 
     public MeleeType(){ id = "Melee"; }
@@ -23,41 +19,37 @@ public class MeleeType extends Type {
      * @return true if the move is legal or false if the move is illegal
      */
     public boolean isLegal(BattleState battleState, BattleMove move){
-        String casterKey = move.getMinionKeys().get(0);
-        move.getMinionKeys().remove(0);
-        ArrayList<String> targetKeys = new ArrayList<>();
-        targetKeys.addAll(move.getMinionKeys());
+        Minion attacker;
 
-        Map<String, Minion> validTargets = targets(battleState, casterKey);
-
-        for(String key: targetKeys){
-            if((validTargets.getOrDefault(key, null)) == null) {
-                return false;
-            }
+        if((attacker = battleState.getTeamOne().get(move.getAttacker().getAvatarKey()).getBattleMinions().get(move.getAttacker().getMinionKey())) != null){
+            return true;
+        } else if((attacker = battleState.getTeamTwo().get(move.getAttacker().getAvatarKey()).getBattleMinions().get(move.getAttacker().getMinionKey())) != null){
+            return true;
+        } else {
+            return false;
         }
-        return true;
     }
 
 
     /**
      * Takes a minion key and a battleState and checks which minions are valid targets for the given minion in the battleState
      * @param battleState current battleState
-     * @param key the minions key in its corresponding hashmap
+     * @param identifier the minions key in its corresponding hashmap
      * @return a list of possible targets for the minion with the given key in the given battleState
      */
-    private Map<String, Minion> targets(final BattleState battleState, String key){
+    private Map<String, Minion> isTarget(final BattleState battleState, BattleMinionIdentifier identifier){
         HashMap<String, Minion> targets = new HashMap<>();
 
-        for (BattleAvatar battleavatar: battleState.getTeamOne()) {
-            if (null != battleavatar.getBattleMinions().getOrDefault(key, null)){
-                for (BattleAvatar battleAvatarTeamTwo: battleState.getTeamTwo()) {
-                    targets.putAll(battleAvatarTeamTwo.getBattleMinions());
+        for (Map.Entry<String, BattleAvatar> battleAvatarEntry: battleState.getTeamOne().entrySet()) {
+            if (null != battleAvatarEntry.getValue().getBattleMinions().get(identifier.getMinionKey())){
+                for (Map.Entry<String, BattleAvatar> battleAvatarEntryTwo: battleState.getTeamOne().entrySet()) {
+                    targets.putAll(battleAvatarEntryTwo.getValue().getBattleMinions());
                 }
                 return targets;
             }
         }
-        for (BattleAvatar battleAvatarTeamOne: battleState.getTeamOne()) {
-            targets.putAll(battleAvatarTeamOne.getBattleMinions());
+        for (Map.Entry<String, BattleAvatar> battleAvatarEntry: battleState.getTeamOne().entrySet()) {
+            targets.putAll(battleAvatarEntry.getValue().getBattleMinions());
         }
         return targets;
     }

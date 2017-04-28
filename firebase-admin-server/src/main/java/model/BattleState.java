@@ -1,16 +1,17 @@
 package model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Chres on 18-04-2017.
  */
 public class BattleState {
-    private List<BattleAvatar> teamOne;
-    private List<BattleAvatar> teamTwo;
+    private Map<String, BattleAvatar> teamOne;
+    private Map<String, BattleAvatar> teamTwo;
     private List<BattleMove> moves;
 
-    public BattleState(final List<BattleAvatar> teamOne, final List<BattleAvatar> teamTwo){
+    public BattleState(final Map<String, BattleAvatar> teamOne, final Map<String, BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
 
@@ -20,7 +21,7 @@ public class BattleState {
     private BattleState(){
     }
 
-    public List<BattleAvatar> getTeamOne() { return teamOne; }
-    public List<BattleAvatar> getTeamTwo() { return teamTwo; }
+    public Map<String, BattleAvatar> getTeamOne() { return teamOne; }
+    public Map<String, BattleAvatar> getTeamTwo() { return teamTwo; }
     public List<BattleMove> getMoves() { return moves; }
 }

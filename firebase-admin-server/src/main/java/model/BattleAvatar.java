@@ -27,9 +27,13 @@ public class BattleAvatar {
      * @param eMinion is the environment minion that is being fought.
      */
     public BattleAvatar(String key, final EMinion eMinion){
+        this.userId = key;
         battleMinions = new HashMap<>();
-        eMinion.battleStats = new BattleStats(eMinion);
-        battleMinions.put(key, eMinion);
+        for(int i = 0; i <= eMinion.getSize(); i++){
+            Minion eMinionToPut = eMinion;
+            eMinionToPut.battleStats = new BattleStats(eMinionToPut);
+            battleMinions.put("minion-"+i, eMinionToPut);
+        }
     }
 
 

@@ -1,5 +1,7 @@
 package model;
 
+import com.google.firebase.database.Exclude;
+
 import java.util.Random;
 
 /**
@@ -57,6 +59,20 @@ public class Minion {
     }
 
     public BattleStats getBattleStats() { return battleStats; }
+
+    public void createBattleStats() {
+        battleStats = new BattleStats(this);
+    }
+
+    /**
+     * Gets if this is alive.
+     * This must have a battle stats before calling this.
+     * @return true if, and only if, this is alive
+     */
+    @Exclude
+    boolean isAlive() {
+        return battleStats.isAlive();
+    }
 
     //public void setBattleStats(BattleStats battleStats) {this.battleStats = battleStats;}
 }

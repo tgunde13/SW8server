@@ -12,7 +12,7 @@ import java.util.Map;
  */
 class ResponseHandler {
     /**
-     * Responds to a client over Firebase
+     * Responds to a client over Firebase.
      * @param userId Firebase user id of the client
      * @param statusCode status code to respond with
      */
@@ -24,12 +24,12 @@ class ResponseHandler {
     }
 
     /**
-     *
-     * @param userId
-     * @param value
+     * Responds to a client over Firebase.
+     * @param userId Firebase user id of the client
+     * @param value value of response, inclusive status code
      */
     static void respond(final String userId, final Map<String, Object> value) {
-        final DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference().child(FirebaseNodes.TASKS);
+        final DatabaseReference taskRef = FirebaseDatabase.getInstance().getReference(FirebaseNodes.TASKS);
 
         // Delete request so that client can create a new request
         taskRef.child(FirebaseNodes.REQUESTS).child(userId).removeValue((databaseError, databaseReference) -> {

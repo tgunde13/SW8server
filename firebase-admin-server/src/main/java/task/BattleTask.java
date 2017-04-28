@@ -1,10 +1,9 @@
 package task;
 
 import com.google.firebase.database.DataSnapshot;
-import model.BattleState;
 
 /**
- * Created by Tobias on 17/04/2017.
+ * Starts a battle.
  */
 abstract class BattleTask extends Task {
     /**

@@ -2,6 +2,7 @@ package task;
 
 import battle.BattleSession;
 import com.google.firebase.database.*;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.*;
@@ -11,7 +12,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 /**
  * Starts a solo PvE battle
@@ -19,14 +19,12 @@ import java.util.function.Consumer;
  * Fields:
  * TASK_ZONE - Zone: Zone of the environment squad to fight
  * TASK_KEY - String: Key of the environment squad to fight
- * TASK_MINIONS - List<String>: MIN_MINIONS to MAX_MINIONS keys to player minions to fight with
  *
  * Expected response codes:
  * OK: Battle started
  * NOT_FOUND: Environment squad not found (e.g. if squad has expired)
  */
 class SoloPveBattleTask extends BattleTask {
-    private static final int MIN_MINIONS = 1;
     private static final int MAX_MINIONS = 3;
 
     /**
@@ -42,15 +40,15 @@ class SoloPveBattleTask extends BattleTask {
     @Override
     void run() {
         getEnvironmentSquad((key, eMinion) -> setPlayerStatus(() -> {
-            final List<BattleAvatar> playerTeam = new ArrayList<>();
-            playerTeam.add(new BattleAvatar(userId));
+            final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+            playerTeam.put(userId, new BattleAvatar());
 
-            final List<BattleAvatar> eTeam = new ArrayList<>();
-            eTeam.add(new BattleAvatar(key, eMinion));
+            final Map<String, BattleAvatar> eTeam = new HashMap<>();
+            eTeam.put(key, new BattleAvatar(eMinion));
 
             final BattleState state = new BattleState(playerTeam, eTeam);
 
-            final BattleSession session = new BattleSession(state);
+            final BattleSession session = new BattleSession(state, MAX_MINIONS);
             session.start();
 
             final Map<String, Object> map = new HashMap<>();
@@ -62,7 +60,10 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param action
+     * Gets the environments squad to fight with from Firebase.
+     * If data from request is invalid, a BAD_REQUEST is responded.
+     * If environment squad is not found, a NOT_FOUND is responded.
+     * @param action action to call if successful
      */
     private void getEnvironmentSquad(final BiConsumer<String, EMinion> action) {
         final Zone zone;
@@ -84,7 +85,7 @@ class SoloPveBattleTask extends BattleTask {
 
         FirebaseDatabase.getInstance().getReference(FirebaseNodes.ENVIRONMENT_SQUADS)
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
-        .addListenerForSingleValueEvent(new HandledValueEventListener(userId, dataSnapshot -> {
+        .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
             if (dataSnapshot.exists()) {
                 action.accept(key, dataSnapshot.getValue(EMinion.class));
             } else {
@@ -94,7 +95,9 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param action
+     * If player is allowed to fight, sets the player status to PLAYER_BATTLE.
+     * If not allowed, a CONFLICT is responded.
+     * @param action action to call if successful
      */
     private void setPlayerStatus(final Runnable action) {
         // Read player status
@@ -130,8 +133,10 @@ class SoloPveBattleTask extends BattleTask {
     }
 
     /**
-     * @param data
-     * @return
+     * Gets if battle is allowed.
+     * A battle is allowed if the player status is null, PLAYER_INVITED, or PLAYER_INVITING.
+     * @param data status to check with
+     * @return true if, and only if, battle is allowed
      */
     private static boolean battleAllowed(final MutableData data) {
         final String status = data.getValue(String.class);

@@ -1,8 +1,8 @@
 import com.google.firebase.database.*;
+import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
 import model.EMinion;
 import model.Zone;
-import task.UnhandledValueEventListener;
 
 import java.util.*;
 
@@ -10,8 +10,8 @@ import java.util.*;
  * A class that can generate model.EMinion and updates Firebase.
  */
 class Generator extends TimerTask {
-    private static final int MINIONS_PER_ZONE = 15;
-    private static final int MINION_LIFETIME = 30*60*1000; // 30 minutes in milliseconds
+    private static final int MINIONS_PER_ZONE = 30;
+    private static final int MINION_LIFETIME = 30 * 60 * 1000; // 30 minutes in milliseconds
 
     private final List<List<QueueMinion>> bulks;
 
@@ -89,7 +89,7 @@ class Generator extends TimerTask {
      * @param action action to run if successful
      */
     private static void addZones(final Set<Zone> zones, final DatabaseReference ref, final Runnable action) {
-        ref.addListenerForSingleValueEvent(new UnhandledValueEventListener(dataSnapshot -> {
+        ref.addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
             for (final DataSnapshot latSnapshot : dataSnapshot.getChildren()) {
                 final int usedLatIndex = Integer.parseInt(latSnapshot.getKey());
 

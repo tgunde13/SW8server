@@ -1,8 +1,10 @@
+import battle.ChoiceListener;
+import battle.ChosenMove;
+import battle.PlayerChoices;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
-import firebase.FirebaseNodes;
 import task.TaskManager;
 
 import java.io.*;
@@ -17,8 +19,21 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
-        new Generator().start();
+        //new Generator().start();
         TaskManager.start();
+
+/*
+        Map<String, Map<String, ChosenMove>> map = new HashMap<>();
+        Map<String, ChosenMove> a1 = new HashMap<>();
+        a1.put("m1", new ChosenMove("m1a", "m1m", null));
+        map.put("a1", a1);
+        FirebaseDatabase.getInstance().getReference("a").setValue(new PlayerChoices(10, map));
+
+
+
+        FirebaseDatabase.getInstance().getReference("battles/-KiebIGetyIEI0x5Tema/chosenMoves")
+                .addListenerForSingleValueEvent(new ChoiceListener(playerChoices -> {}));
+*/
 
         Thread.currentThread().join();
     }

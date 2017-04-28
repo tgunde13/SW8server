@@ -20,7 +20,7 @@ public class BattleMinionIdentifier {
     /**
      * Default constructor
      */
-    private BattleMinionIdentifier(){
+    public BattleMinionIdentifier(){
 
     }
 

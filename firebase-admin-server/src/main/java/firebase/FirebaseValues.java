@@ -1,7 +1,7 @@
 package firebase;
 
 /**
- * Created by Tobias on 17/04/2017.
+ * Contains values for Firebase.
  */
 public class FirebaseValues {
     public static final String PLAYER_INVITED = "invited";
@@ -10,4 +10,5 @@ public class FirebaseValues {
 
     // Battle
     public static final String BATTLE_NOT_CHOSEN = "notChosen";
+    public static final String BATTLE_SKIP = "skip";
 }

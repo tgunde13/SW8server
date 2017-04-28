@@ -12,9 +12,8 @@ public class TaskManager {
      * Starts the request management by listening to relevant Firebase nodes.
      */
     public static void start() {
-        final DatabaseReference reference = FirebaseDatabase.getInstance().getReference().child(FirebaseNodes.TASKS).child(FirebaseNodes.REQUESTS);
-
-        reference.addChildEventListener(new ChildEventListener() {
+        FirebaseDatabase.getInstance().getReference(FirebaseNodes.TASKS).child(FirebaseNodes.REQUESTS)
+                .addChildEventListener(new ChildEventListener() {
             public void onChildAdded(final DataSnapshot dataSnapshot, final String previousChildName) {
                 onNewTask(dataSnapshot);
             }

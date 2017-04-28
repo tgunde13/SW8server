@@ -5,7 +5,7 @@ package firebase;
  */
 public class FirebaseNodes {
     // Tasks
-    public static final String TASKS = "tasks";
+    public static final String TASKS = "testing";
     public static final String REQUESTS = "requests";
     public static final String RESPONSES = "responses";
 
@@ -13,7 +13,6 @@ public class FirebaseNodes {
     public static final String TASK_DATA = "data";
     public static final String TASK_ZONE = "zone";
     public static final String TASK_KEY = "key";
-    public static final String TASK_MINIONS = "minions";
 
     // Player data
     public static final String PLAYERS = "players";
@@ -30,7 +29,7 @@ public class FirebaseNodes {
 
     // Battles
     public static final String BATTLES = "battles";
-    public static final String BATTLE_DESIRED_MOVES = "desiredMoves";
+    public static final String BATTLE_CHOSEN_MOVES = "chosenMoves";
     public static final String BATTLE_STATE = "state";
 
     // Player zone index

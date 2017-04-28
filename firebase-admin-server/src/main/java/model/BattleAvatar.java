@@ -17,30 +17,21 @@ public class BattleAvatar {
      * Constructor for creating a battle avatar with a list of minions and a user ID.
      * @param UserId Id of the user this avatar belongs to.
      */
-    public BattleAvatar(final String UserId){
+    public BattleAvatar(){
         battleMinions = new HashMap<>();
-        this.userId = UserId;
     }
 
     /**
      * Constructor for a battle avatar that does not belong to a player but an environment minion.
      * @param eMinion is the environment minion that is being fought.
      */
-    public BattleAvatar(String key, final EMinion eMinion){
-        this.userId = key;
+    public BattleAvatar(final EMinion eMinion){
         battleMinions = new HashMap<>();
         for(int i = 0; i <= eMinion.getSize(); i++){
             Minion eMinionToPut = eMinion;
             eMinionToPut.battleStats = new BattleStats(eMinionToPut);
             battleMinions.put("minion-"+i, eMinionToPut);
         }
-    }
-
-
-    /**
-     * Default constructor, used by firebase
-     */
-    private BattleAvatar(){
     }
 
 
@@ -65,5 +56,20 @@ public class BattleAvatar {
     @Exclude
     public boolean isPlayerControlled() {
         return userId != null;
+    }
+
+    /**
+     * Gets if this has alive minions.
+     * The minions should have battle stats before calling this.
+     * @return true if, and only if, this has alive minions
+     */
+    boolean hasAliveMinions() {
+        for (final Minion minion : battleMinions.values()) {
+            if (minion.isAlive()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

@@ -9,11 +9,11 @@ import java.util.*;
  * Created by Chres on 18-04-2017.
  */
 public class BattleState implements Iterable<BattleAvatar> {
-    private List<BattleAvatar> teamOne;
-    private List<BattleAvatar> teamTwo;
+    private Map<String, BattleAvatar> teamOne;
+    private Map<String, BattleAvatar> teamTwo;
     private List<BattleMove> moves;
 
-    public BattleState(final List<BattleAvatar> teamOne, final List<BattleAvatar> teamTwo){
+    public BattleState(final Map<String, BattleAvatar> teamOne, final Map<String, BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
     }
@@ -22,8 +22,8 @@ public class BattleState implements Iterable<BattleAvatar> {
 
     }
 
-    public List<BattleAvatar> getTeamOne() { return teamOne; }
-    public List<BattleAvatar> getTeamTwo() { return teamTwo; }
+    public Map<String, BattleAvatar> getTeamOne() { return teamOne; }
+    public Map<String, BattleAvatar> getTeamTwo() { return teamTwo; }
     public List<BattleMove> getMoves() { return moves; }
 
     /**
@@ -31,13 +31,7 @@ public class BattleState implements Iterable<BattleAvatar> {
      * @return true if, and only if, the battle is over
      */
     public boolean isOver() {
-        for (final BattleAvatar avatar : teamOne) {
-            if (avatar.isPlayerControlled() && avatar.hasAliveMinions()) {
-                return false;
-            }
-        }
-
-        for (final BattleAvatar avatar : teamTwo) {
+        for (final BattleAvatar avatar : this) {
             if (avatar.isPlayerControlled() && avatar.hasAliveMinions()) {
                 return false;
             }
@@ -88,8 +82,8 @@ public class BattleState implements Iterable<BattleAvatar> {
     @Nonnull
     public Iterator<BattleAvatar> iterator() {
         final List<BattleAvatar> avatars = new ArrayList<>();
-        avatars.addAll(teamOne);
-        avatars.addAll(teamTwo);
+        avatars.addAll(teamOne.values());
+        avatars.addAll(teamTwo.values());
         return avatars.iterator();
     }
 }

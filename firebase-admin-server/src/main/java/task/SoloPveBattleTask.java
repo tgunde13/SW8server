@@ -40,11 +40,11 @@ class SoloPveBattleTask extends BattleTask {
     @Override
     void run() {
         getEnvironmentSquad((key, eMinion) -> setPlayerStatus(() -> {
-            final List<BattleAvatar> playerTeam = new ArrayList<>();
-            playerTeam.add(new BattleAvatar(userId));
+            final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+            playerTeam.put(userId, new BattleAvatar());
 
-            final List<BattleAvatar> eTeam = new ArrayList<>();
-            eTeam.add(new BattleAvatar(key, eMinion));
+            final Map<String, BattleAvatar> eTeam = new HashMap<>();
+            eTeam.put(key, new BattleAvatar(eMinion));
 
             final BattleState state = new BattleState(playerTeam, eTeam);
 

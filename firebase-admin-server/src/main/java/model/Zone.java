@@ -1,5 +1,6 @@
 package model;
 
+import java.util.EmptyStackException;
 import java.util.Random;
 
 /**
@@ -63,7 +64,7 @@ public class Zone {
         final double lat = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) latIndex) / ((double) ZONES_PER_DEGREE);
         final double lon = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) lonIndex) / ((double) ZONES_PER_DEGREE);
 
-        return new EMinion(lat, lon);
+        return EMinion.generateEMinionData(lat, lon);
     }
 
     /**

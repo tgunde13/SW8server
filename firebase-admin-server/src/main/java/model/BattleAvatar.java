@@ -17,26 +17,21 @@ public class BattleAvatar {
      * Constructor for creating a battle avatar with a list of minions and a user ID.
      * @param UserId Id of the user this avatar belongs to.
      */
-    public BattleAvatar(final String UserId){
+    public BattleAvatar(){
         battleMinions = new HashMap<>();
-        this.userId = UserId;
     }
 
     /**
      * Constructor for a battle avatar that does not belong to a player but an environment minion.
      * @param eMinion is the environment minion that is being fought.
      */
-    public BattleAvatar(String key, final EMinion eMinion){
+    public BattleAvatar(final EMinion eMinion){
         battleMinions = new HashMap<>();
-        eMinion.battleStats = new BattleStats(eMinion);
-        battleMinions.put(key, eMinion);
-    }
-
-
-    /**
-     * Default constructor, used by firebase
-     */
-    private BattleAvatar(){
+        for(int i = 0; i <= eMinion.getSize(); i++){
+            Minion eMinionToPut = eMinion;
+            eMinionToPut.battleStats = new BattleStats(eMinionToPut);
+            battleMinions.put("minion-"+i, eMinionToPut);
+        }
     }
 
 

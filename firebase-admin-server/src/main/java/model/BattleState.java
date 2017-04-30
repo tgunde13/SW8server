@@ -8,9 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by Chres on 18-04-2017.
- */
+
 public class BattleState implements Iterable<BattleAvatar> {
     private Map<String, BattleAvatar> teamOne;
     private Map<String, BattleAvatar> teamTwo;
@@ -67,6 +65,10 @@ public class BattleState implements Iterable<BattleAvatar> {
         }
 
         throw new RuntimeException();
+    }
+
+    public void doMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
+
     }
 
     @Override

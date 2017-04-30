@@ -1,6 +1,5 @@
 package model;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,19 +11,37 @@ public class MeleeType extends Type {
     public MeleeType(){ id = "Melee"; }
 
 
+
+    public BattleMove calculateMove(BattleState battleState, BattleMinionIdentifier target, BattleMinionIdentifier attacker, boolean isTeamOne){
+       if(isLegal(battleState, target, isTeamOne)){
+
+           BattleMove move = new BattleMove(target, attacker, 0);
+       }
+
+       return null;
+    }
+
     /**
      * Takes a move and a battleState and checks whether the move is legal in the given battleState
      * @param battleState the current battleState we want to check in
      * @param move battleMove that represents the move we want to check for
      * @return true if the move is legal or false if the move is illegal
      */
-    public boolean isLegal(BattleState battleState, BattleMove move){
+    private boolean isLegal(BattleState battleState, BattleMinionIdentifier target, boolean isTeamOne){
         Minion attacker;
 
-        if((attacker = battleState.getTeamOne().get(move.getAttacker().getAvatarKey()).getBattleMinions().get(move.getAttacker().getMinionKey())) != null){
-            return true;
+        if(isTeamOne){
+            if((battleState.getTeamTwo().get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey())) != null){
+                return true;
+            } else {
+                return false;
+            }
         } else if((attacker = battleState.getTeamTwo().get(move.getAttacker().getAvatarKey()).getBattleMinions().get(move.getAttacker().getMinionKey())) != null){
-            return true;
+            if((battleState.getTeamOne().get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey())) != null){
+                return true;
+            } else {
+                return false;
+            }
         } else {
             return false;
         }

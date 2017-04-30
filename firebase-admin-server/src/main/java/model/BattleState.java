@@ -3,10 +3,7 @@ package model;
 import battle.ChosenMove;
 
 import javax.annotation.Nonnull;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class BattleState implements Iterable<BattleAvatar> {
@@ -43,11 +40,23 @@ public class BattleState implements Iterable<BattleAvatar> {
 
     /**
      * Advances to the next turn by performance moves.
+     * Minions with higher speed performs moves first.
+     * Minions with same speed, but higher level, performs moves first.
+     * Minions with same speed and level performs moves in a random order.
      * @param chosenMoves the moves to perform
      */
     public void advance(final Map<String, Map<String, ChosenMove>> chosenMoves) {
         // TODO
 
+        int speed = 0, level = 0;
+        Map<String, Map<String, ChosenMove>> fastestMoves = new HashMap<>();
+
+        for (Map.Entry<String, Map<String, ChosenMove>> playerMoves : chosenMoves.entrySet()) {
+            for (Map.Entry<String, ChosenMove> minionMove : playerMoves.getValue().entrySet()) {
+                // If should act before previous
+                if (teamOne.)
+            }
+        }
     }
 
     /**

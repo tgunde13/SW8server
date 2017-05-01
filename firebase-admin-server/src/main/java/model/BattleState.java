@@ -163,7 +163,8 @@ public class BattleState {
      * @param target two keys used to identify a specific minion in a battlestate that represents the target of the move
      */
     public void performAndReportMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
-        System.out.println("TOB, BattleState, performAndReportMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
+        System.out.println("TOB, BattleState, performAndReportMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey() + ", " + target.getAvatarKey() + ", " + target.getMinionKey());
+
         Minion minionAttacker;
         BattleMove move;
         BattleAvatar avatar;

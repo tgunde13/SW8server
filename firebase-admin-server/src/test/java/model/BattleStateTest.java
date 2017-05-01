@@ -46,34 +46,67 @@ public class BattleStateTest {
         assertTrue(battleState.getTeamTwo().get("avatar2").getBattleMinions().get("minion-1").health == 900);
     }
 
-    private PlayerMinion minion1 = new PlayerMinion("name1", 1, 6, 1, 1, "Melee");
-    private EMinion slowEMinion = new EMinion(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee");
-
     @Test
-    public void advance() throws Exception {
-
-        Map<String, BattleAvatar> playerTeam = new HashMap<>();
-        BattleAvatar playerAvatar = new BattleAvatar();
-        playerAvatar.addMinion("pMinion1", minion1);
+    public void advanceKill() throws Exception {
+        // Player team
+        final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+        final BattleAvatar playerAvatar = new BattleAvatar();
+        playerAvatar.addMinion("pMinion1", new PlayerMinion("name1", 1, 6, 1, 1, "Melee"));
         playerTeam.put("uid1", playerAvatar);
 
-        Map<String, BattleAvatar> eTeam = new HashMap<>();
-        eTeam.put("eKey1", new BattleAvatar(slowEMinion));
+        // E team
+        final Map<String, BattleAvatar> eTeam = new HashMap<>();
+        eTeam.put("eKey1", new BattleAvatar(new EMinion(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee")));
 
         final BattleState state = new BattleState(playerTeam, eTeam);
 
-        Map<String, ChosenMove> playerMoves = new HashMap<>();
+        // player minion attacks e minion
+        final Map<String, ChosenMove> playerMoves = new HashMap<>();
         playerMoves.put("pMinion1", new ChosenMove("eKey1", "minion-0", null));
-
-        Map<String, Map<String, ChosenMove>> chosenMoves = new HashMap<>();
+        final Map<String, Map<String, ChosenMove>> chosenMoves = new HashMap<>();
         chosenMoves.put("uid1", playerMoves);
 
         // Advance
         state.advance(chosenMoves);
 
         // e minion 0, and only that should die
-        assertTrue(state.getTeamTwo().get("eKey1").hasAliveMinions());
+        assertTrue(state.getTeamOne().get("uid1").getBattleMinions().get("pMinion1").isAlive());
         assertFalse(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").isAlive());
+        assertTrue(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-1").isAlive());
+        assertTrue(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-2").isAlive());
+    }
+
+    @Test
+    public void advanceNotKill() throws Exception {
+        // Player team
+        final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+        final BattleAvatar playerAvatar = new BattleAvatar();
+        playerAvatar.addMinion("pMinion1", new PlayerMinion("name1", 1, 6, 1, 1, "Melee"));
+        playerTeam.put("uid1", playerAvatar);
+
+        // E team
+        final Map<String, BattleAvatar> eTeam = new HashMap<>();
+        eTeam.put("eKey1", new BattleAvatar(new EMinion(57.0, 10.0, 3, "name", 2, 5, 1, 1, "Melee")));
+
+        final BattleState state = new BattleState(playerTeam, eTeam);
+
+        // player minion attacks e minion
+        final Map<String, ChosenMove> playerMoves = new HashMap<>();
+        playerMoves.put("pMinion1", new ChosenMove("eKey1", "minion-0", null));
+        final Map<String, Map<String, ChosenMove>> chosenMoves = new HashMap<>();
+        chosenMoves.put("uid1", playerMoves);
+
+        // Advance
+        state.advance(chosenMoves);
+
+        // All should be alive
+        assertTrue(state.getTeamOne().get("uid1").getBattleMinions().get("pMinion1").isAlive());
+        assertTrue(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").isAlive());
+        assertTrue(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-1").isAlive());
+        assertTrue(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-2").isAlive());
+
+        // minion-0 should have 1 health
+        assertEquals(1, state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").getBattleStats().getCurrentHP());
     }
 
 }

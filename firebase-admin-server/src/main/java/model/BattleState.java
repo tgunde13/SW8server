@@ -172,23 +172,33 @@ public class BattleState {
     public void doMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
         Minion minionAttacker;
         BattleMove move;
+        BattleAvatar avatar;
 
-        if(getTeamOne().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey()) != null){
-            minionAttacker = getTeamOne().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey());
-            move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, true);
-            applyMove(move, true);
-        } else if (getTeamTwo().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey()) != null) {
-            minionAttacker = getTeamTwo().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey());
-            move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, false);
-            applyMove(move, false);
+        if((avatar = getTeamOne().get(attacker.getAvatarKey())) != null){
+            if((minionAttacker = avatar.getBattleMinions().get(attacker.getMinionKey())) != null) {
+                move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, true);
+                applyMove(move, true);
+            }
+        } else if ((avatar = getTeamTwo().get(attacker.getAvatarKey())) != null) {
+            if((minionAttacker = avatar.getBattleMinions().get(attacker.getMinionKey())) != null) {
+                move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, false);
+                applyMove(move, false);
+            }
         }
     }
 
     private void applyMove(BattleMove move, boolean isTeamOne){
+        if(move == null){
+            return;
+        }
+
         Minion target;
         if(isTeamOne){
             target = teamTwo.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
             target.health -= move.getMoveValue();
+        } else {
+            target = teamOne.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
+            target.health -= 100;
         }
         moves.add(move);
     }

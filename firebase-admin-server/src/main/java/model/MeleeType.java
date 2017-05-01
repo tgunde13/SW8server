@@ -38,20 +38,22 @@ public class MeleeType extends Type {
      * @return
      */
     private boolean isLegal(BattleState battleState, BattleMinionIdentifier target, boolean isTeamOne){
-        Minion attacker;
+        BattleAvatar avatar;
 
         if(isTeamOne){
-            if(battleState.getTeamTwo().get(target.getAvatarKey()).getBattleMinions().get(target.getMinionKey()) != null){
-                return true;
-            } else {
-                return false;
+            if((avatar = battleState.getTeamTwo().get(target.getAvatarKey())) != null) {
+                if (avatar.getBattleMinions().get(target.getMinionKey()) != null) {
+                    return true;
+                }
             }
+            return false;
         } else {
-            if (battleState.getTeamOne().get(target.getAvatarKey()).getBattleMinions().get(target.getMinionKey()) != null) {
-                return true;
-            } else {
-                return false;
+            if ((avatar = battleState.getTeamOne().get(target.getAvatarKey())) != null) {
+                if (avatar.getBattleMinions().get(target.getMinionKey()) != null) {
+                    return true;
+                }
             }
+            return false;
         }
     }
 }

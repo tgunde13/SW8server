@@ -189,10 +189,10 @@ public class BattleState {
         Minion target;
         if(isTeamOne){
             target = teamTwo.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
-            target.health -= move.getMoveValue();
+            target.battleStats.setCurrentHP(target.battleStats.getCurrentHP() - move.getMoveValue());
         } else {
             target = teamOne.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
-            target.health -= move.getMoveValue();
+            target.battleStats.setCurrentHP(target.battleStats.getCurrentHP() - move.getMoveValue());
         }
         moves.add(move);
     }

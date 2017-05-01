@@ -1,6 +1,5 @@
 package model;
 
-import java.util.EmptyStackException;
 import java.util.Random;
 
 /**
@@ -57,14 +56,14 @@ public class Zone {
      * Generates a map minion.
      * @return the minion
      */
-    public EMinion generateMapMinion() {
+    public EMinionTemplate generateMapMinion() {
         final Random rand = new Random();
 
         // Random coordinates within this
         final double lat = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) latIndex) / ((double) ZONES_PER_DEGREE);
         final double lon = (rand.nextDouble() / ((double) ZONES_PER_DEGREE)) + ((double) lonIndex) / ((double) ZONES_PER_DEGREE);
 
-        return EMinion.generateEMinionData(lat, lon);
+        return EMinionTemplate.generateEMinionData(lat, lon);
     }
 
     /**

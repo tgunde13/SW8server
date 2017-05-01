@@ -144,13 +144,14 @@ public class BattleState {
      * @param minion minion to add
      */
     public synchronized void addSynchronized(final String playerKey, final String minionKey, final PlayerMinion minion) {
-        Iterator<BattleAvatar> iterator = valueIterator();
-        while (iterator.hasNext()){
-            BattleAvatar avatar = iterator.next();
-            if (avatar.isPlayerControlled()) {
-                avatar.getBattleMinions().put(minionKey, minion);
-                return;
-            }
+        BattleAvatar avatar;
+
+        if ((avatar = teamOne.get(playerKey)) != null) {
+            avatar.addMinion(minionKey, minion);
+            return;
+        } else if((avatar = teamTwo.get(playerKey)) != null) {
+            avatar.addMinion(minionKey, minion);
+            return;
         }
 
         throw new RuntimeException();
@@ -165,23 +166,33 @@ public class BattleState {
         System.out.println("TOB, BattleState, performAndReportMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
         Minion minionAttacker;
         BattleMove move;
+        BattleAvatar avatar;
 
-        if(getTeamOne().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey()) != null){
-            minionAttacker = getTeamOne().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey());
-            move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, true);
-            applyMove(move, true);
-        } else if (getTeamTwo().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey()) != null) {
-            minionAttacker = getTeamTwo().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey());
-            move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, false);
-            applyMove(move, false);
+        if((avatar = getTeamOne().get(attacker.getAvatarKey())) != null){
+            if((minionAttacker = avatar.getBattleMinions().get(attacker.getMinionKey())) != null) {
+                move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, true);
+                applyMove(move, true);
+            }
+        } else if ((avatar = getTeamTwo().get(attacker.getAvatarKey())) != null) {
+            if((minionAttacker = avatar.getBattleMinions().get(attacker.getMinionKey())) != null) {
+                move = minionAttacker.getTypeClass().calculateMove(this, attacker, target, false);
+                applyMove(move, false);
+            }
         }
     }
 
     private void applyMove(BattleMove move, boolean isTeamOne){
+        if(move == null){
+            return;
+        }
+
         Minion target;
         if(isTeamOne){
             target = teamTwo.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
             target.health -= move.getMoveValue();
+        } else {
+            target = teamOne.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
+            target.health -= 100;
         }
         moves.add(move);
     }

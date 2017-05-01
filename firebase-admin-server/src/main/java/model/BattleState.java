@@ -155,7 +155,7 @@ public class BattleState {
         while (iterator.hasNext()){
             BattleAvatar avatar = iterator.next();
             if (avatar.isPlayerControlled()) {
-                avatar.getBattleMinions().put(minionKey, minion);
+                avatar.addMinion(minionKey, minion);
                 return;
             }
         }

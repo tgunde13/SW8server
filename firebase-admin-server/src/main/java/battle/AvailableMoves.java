@@ -11,7 +11,7 @@ import java.util.Map;
 /**
  * Created by Tobias on 25/04/2017.
  */
-public class AvailableMoves extends PlayerChoices {
+public class AvailableMoves extends FirebaseAvatarChoices {
     AvailableMoves(final int turn, final BattleState state) {
         super(turn, generateMoves(state));
     }

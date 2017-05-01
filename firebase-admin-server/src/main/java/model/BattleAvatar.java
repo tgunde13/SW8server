@@ -29,11 +29,11 @@ public class BattleAvatar {
     public BattleAvatar(final EMinion eMinion){
         isPlayerControlled = false;
         battleMinions = new HashMap<>();
-        for(int i = 0; i <= eMinion.getSize(); i++){
+        for (int i = 0; i < eMinion.getSize(); i++){
             Minion eMinionToPut = eMinion;
             eMinionToPut.battleStats = new BattleStats(eMinionToPut);
             eMinionToPut.assignTypeClass();
-            battleMinions.put("minion-"+i, eMinionToPut);
+            battleMinions.put("minion-" + i, eMinionToPut);
         }
     }
 

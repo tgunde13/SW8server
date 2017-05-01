@@ -12,13 +12,13 @@ import java.util.function.Consumer;
  * A data change is accepted if all players have chosen a move for all their minions.
  */
 public class ChoiceListener extends DataChangeListener {
-    private final Consumer<PlayerChoices> action;
+    private final Consumer<FirebaseAvatarChoices> action;
 
     /**
      * Constructor
      * @param action action to call whenever a data change is accepted
      */
-    public ChoiceListener(final Consumer<PlayerChoices> action) {
+    public ChoiceListener(final Consumer<FirebaseAvatarChoices> action) {
         this.action = action;
     }
 
@@ -26,7 +26,7 @@ public class ChoiceListener extends DataChangeListener {
     public void onDataChange(final DataSnapshot dataSnapshot) {
         System.out.println("TOB: ChoiceListener, run");
 
-        final PlayerChoices choices = dataSnapshot.getValue(PlayerChoices.class);
+        final FirebaseAvatarChoices choices = dataSnapshot.getValue(FirebaseAvatarChoices.class);
 
         // If a move is not chosen, abort
         for (final Map<String, ChosenMove> playerMoves: choices.getMoves().values()) {

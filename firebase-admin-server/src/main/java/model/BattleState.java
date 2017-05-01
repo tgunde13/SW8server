@@ -1,6 +1,8 @@
 package model;
 
+import battle.AvatarChoices;
 import battle.ChosenMove;
+import battle.FirebaseAvatarChoices;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -17,8 +19,7 @@ public class BattleState {
         moves = new ArrayList<BattleMove>();
     }
 
-    private BattleState(){
-
+    private BattleState() {
     }
 
     public Map<String, BattleAvatar> getTeamOne() { return teamOne; }
@@ -44,23 +45,103 @@ public class BattleState {
 
     /**
      * Advances to the next turn by performance moves.
-     * Minions with higher speed performs moves first.
-     * Minions with same speed, but higher level, performs moves first.
-     * Minions with same speed and level performs moves in a random order.
      * @param chosenMoves the moves to perform
      */
     public void advance(final Map<String, Map<String, ChosenMove>> chosenMoves) {
-        /*// TODO
+        final AvatarChoices priorityMoves = getHighestPriorityMoves(chosenMoves);
 
-        int speed = 0, level = 0;
-        Map<String, Map<String, ChosenMove>> fastestMoves = new HashMap<>();
+        if (priorityMoves.getMoves().isEmpty()) {
+            return;
+        }
 
-        for (Map.Entry<String, Map<String, ChosenMove>> playerMoves : chosenMoves.entrySet()) {
-            for (Map.Entry<String, ChosenMove> minionMove : playerMoves.getValue().entrySet()) {
-                // If should act before previous
-                if (teamOne.)
+        // Perform the moves
+        for (final Map.Entry<String, Map<String, ChosenMove>> moveEntries : priorityMoves.getMoves().entrySet()) {
+            final String attackerAvatarKey = moveEntries.getKey();
+
+            for (final Map.Entry<String, ChosenMove> playerEntries : moveEntries.getValue().entrySet()) {
+                final String attackerMinionKey = playerEntries.getKey();
+
+                performMove(new BattleMinionIdentifier(attackerAvatarKey, attackerMinionKey), playerEntries.getValue());
+
+                // Remove move
+                chosenMoves.get(attackerAvatarKey).remove(attackerMinionKey);
             }
-        }*/
+        }
+
+        advance(chosenMoves);
+    }
+
+    private void performMove(final BattleMinionIdentifier attacker, final BattleMinionIdentifier target) {
+        System.out.println("TOB, BattleState, performMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
+        // TODO
+    }
+
+    public BattleMove calculateMove(final BattleMinionIdentifier attacker, final BattleMinionIdentifier target) {
+        return null;
+        //TODO
+    }
+
+    public void doMove(final BattleMove move) {
+        //TODO
+    }
+
+    /**
+     * Get the moves with highest priority.
+     * Minions with higher speed performs moves first.
+     * Minions with same speed, but higher level, performs moves first.
+     * Minions with same speed and level performs moves in a random order.
+     * @param moves moves to prioritise
+     * @return the moves with highest priority
+     */
+    private AvatarChoices getHighestPriorityMoves(final Map<String, Map<String, ChosenMove>> moves) {
+        int speed = 0, level = 0;
+        final AvatarChoices fastestMoves = new AvatarChoices(new HashMap<>());
+
+        for (final Map.Entry<String, Map<String, ChosenMove>> playerMoves : moves.entrySet()) {
+            for (final Map.Entry<String, ChosenMove> minionMove : playerMoves.getValue().entrySet()) {
+                final Minion minion = getAvatar(playerMoves.getKey()).getBattleMinions().get(minionMove.getKey());
+
+                if (minion.getBattleStats().getCurrentSpeed() > speed) {
+                    // If faster than the previously fastest,
+                    // Clear, add, and update speed and level
+                    fastestMoves.getMoves().clear();
+                    fastestMoves.put(playerMoves.getKey(), minionMove.getKey(), minionMove.getValue());
+                    speed = minion.getBattleStats().getCurrentSpeed();
+                    level = minion.getLevel();
+                } else if (minion.getBattleStats().getCurrentSpeed() == speed) {
+                    if (minion.getLevel() > level) {
+                        // If same speed, but higher level,
+                        // Clear, add, and update speed and level
+                        fastestMoves.getMoves().clear();
+                        fastestMoves.put(playerMoves.getKey(), minionMove.getKey(), minionMove.getValue());
+                        speed = minion.getBattleStats().getCurrentSpeed();
+                        level = minion.getLevel();
+                    } else if (minion.getLevel() == level) {
+                        // If same speed and level, add
+                        fastestMoves.put(playerMoves.getKey(), minionMove.getKey(), minionMove.getValue());
+                    }
+                }
+            }
+        }
+
+        return fastestMoves;
+    }
+
+
+
+    /**
+     * Gets an avatar in this from a key.
+     * @param key key to get from
+     * @return the found avatar or null if not found
+     */
+    private BattleAvatar getAvatar(final String key) {
+        final BattleAvatar avatar = teamOne.get(key);
+
+        if (avatar != null) {
+            return avatar;
+        }
+
+        return teamTwo.get(key);
     }
 
     /**

@@ -15,7 +15,7 @@ class BattleTimeoutTask extends TimerTask {
 
     private final int timeoutTurn;
     private final BattleSession session;
-    private final Consumer<PlayerChoices> action;
+    private final Consumer<FirebaseAvatarChoices> action;
 
     /**
      * Constructor.
@@ -23,7 +23,7 @@ class BattleTimeoutTask extends TimerTask {
      * @param session battle session that this belongs to
      * @param action action to call in order to advance
      */
-    BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<PlayerChoices> action) {
+    BattleTimeoutTask(final int timeoutTurn, final BattleSession session, final Consumer<FirebaseAvatarChoices> action) {
         this.timeoutTurn = timeoutTurn;
         this.session = session;
         this.action = action;
@@ -50,7 +50,7 @@ class BattleTimeoutTask extends TimerTask {
 
         // Get chosen moves from Firebase
         session.getChosenMovesRef().addListenerForSingleValueEvent(new DataChangeListenerAdapter(snapshot -> {
-            final PlayerChoices moves = snapshot.getValue(PlayerChoices.class);
+            final FirebaseAvatarChoices moves = snapshot.getValue(FirebaseAvatarChoices.class);
 
             // Remove not chosen moves
             for (final Map<String, ChosenMove> playerMoves: moves.getMoves().values()) {

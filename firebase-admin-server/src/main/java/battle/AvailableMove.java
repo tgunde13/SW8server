@@ -1,10 +1,13 @@
 package battle;
 
 /**
- * Created by Tobias on 26/04/2017.
+ * A move that is available and thus not yet chosen.
  */
-public class AvailableMove extends ChosenMove {
-    public AvailableMove() {
+class AvailableMove extends ChosenMove {
+    /**
+     * Constructor
+     */
+    AvailableMove() {
         super(null, null, true);
     }
 }

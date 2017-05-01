@@ -8,17 +8,24 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by Tobias on 26/04/2017.
+ * The choices that a player can choose from when choosing minions.
  */
-public class AvailableMinionChoices extends FirebaseAvatarChoices {
+class AvailableMinionChoices extends FirebaseAvatarChoices {
     private static final String CHOOSE_MINIONS_PREFIX = "minion-";
 
-    public AvailableMinionChoices(final BattleState state, final int maxMinionsPerPlayer) {
+    /**
+     * Constructor
+     * @param state state to constructor from
+     * @param maxMinionsPerPlayer maximum number of minions a player can choose
+     */
+    AvailableMinionChoices(final BattleState state, final int maxMinionsPerPlayer) {
         super(BattleSession.CHOOSE_MINIONS_TURN, getChooseMinionsMap(state, maxMinionsPerPlayer));
     }
 
     /**
      * Gets a map for choosing minions for some avatars.
+     * @param state state to construct map from
+     * @param maxMinionsPerPlayer maximum number of minions a player can choose
      * @return the map
      */
     private static Map<String, Map<String, ChosenMove>> getChooseMinionsMap(final BattleState state, final int maxMinionsPerPlayer) {
@@ -29,9 +36,9 @@ public class AvailableMinionChoices extends FirebaseAvatarChoices {
 
         final Map<String, Map<String, ChosenMove>> moves = new HashMap<>();
 
-        Iterator<Map.Entry<String, BattleAvatar>> iterator = state.EntryIterator();
+        final Iterator<Map.Entry<String, BattleAvatar>> iterator = state.EntryIterator();
         while (iterator.hasNext()){
-            Map.Entry<String, BattleAvatar> avatar = iterator.next();
+            final Map.Entry<String, BattleAvatar> avatar = iterator.next();
             if (avatar.getValue().isPlayerControlled()) {
                 moves.put(avatar.getKey(), chooseMinionsMap);
             }

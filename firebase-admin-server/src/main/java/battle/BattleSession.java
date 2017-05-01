@@ -16,7 +16,7 @@ public class BattleSession {
     static final int CHOOSE_MINIONS_TURN = 0;
 
     private final BattleState state;
-    private int maxMinionsPerPlayer;
+    private final int maxMinionsPerPlayer;
     private final DatabaseReference ref, chosenMovesRef;
 
     private ChoiceListener listener;

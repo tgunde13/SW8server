@@ -71,20 +71,6 @@ public class BattleState {
         advance(chosenMoves);
     }
 
-    private void performMove(final BattleMinionIdentifier attacker, final BattleMinionIdentifier target) {
-        System.out.println("TOB, BattleState, performMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
-        // TODO
-    }
-
-    public BattleMove calculateMove(final BattleMinionIdentifier attacker, final BattleMinionIdentifier target) {
-        return null;
-        //TODO
-    }
-
-    public void doMove(final BattleMove move) {
-        //TODO
-    }
-
     /**
      * Get the moves with highest priority.
      * Minions with higher speed performs moves first.
@@ -168,7 +154,8 @@ public class BattleState {
      * @param attacker two keys used to identify a specific minion in a battlestate that represents the minion performing the move
      * @param target two keys used to identify a specific minion in a battlestate that represents the target of the move
      */
-    public void doMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
+    public void performMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
+        System.out.println("TOB, BattleState, performMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
         Minion minionAttacker;
         BattleMove move;
 

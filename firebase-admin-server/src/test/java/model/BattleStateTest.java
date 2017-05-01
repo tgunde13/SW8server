@@ -12,7 +12,7 @@ import static org.junit.Assert.*;
  *
  */
 public class BattleStateTest {
-    private Minion minion1 = new Minion("name1", 1, 6, 1, 1, "Melee");
+    private PlayerMinion minion1 = new PlayerMinion("name1", 1, 6, 1, 1, "Melee");
     private EMinion slowEMinion = new EMinion(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee");
 
     @Test
@@ -20,7 +20,7 @@ public class BattleStateTest {
 
         Map<String, BattleAvatar> playerTeam = new HashMap<>();
         BattleAvatar playerAvatar = new BattleAvatar();
-        playerAvatar.getBattleMinions().put("pMinion1", minion1);
+        playerAvatar.addMinion("pMinion1", minion1);
         playerTeam.put("uid1", playerAvatar);
 
         Map<String, BattleAvatar> eTeam = new HashMap<>();

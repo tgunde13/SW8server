@@ -4,6 +4,7 @@ import model.BattleAvatar;
 import model.BattleState;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 /**
@@ -28,12 +29,13 @@ public class AvailableMinionChoices extends PlayerChoices {
 
         final Map<String, Map<String, ChosenMove>> moves = new HashMap<>();
 
-        for (final BattleAvatar avatar : state) {
-            if (avatar.isPlayerControlled()) {
-                moves.put(avatar.getUserId(), chooseMinionsMap);
+        Iterator<Map.Entry<String, BattleAvatar>> iterator = state.EntryIterator();
+        while (iterator.hasNext()){
+            Map.Entry<String, BattleAvatar> avatar = iterator.next();
+            if (avatar.getValue().isPlayerControlled()) {
+                moves.put(avatar.getKey(), chooseMinionsMap);
             }
         }
-
         return moves;
     }
 }

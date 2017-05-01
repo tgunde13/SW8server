@@ -8,7 +8,7 @@ import java.util.Map;
 public abstract class Type {
     protected String id;
 
-    public abstract boolean isLegal(BattleState battleState, BattleMove move);
+    public abstract BattleMove calculateMove(BattleState battleState, BattleMinionIdentifier attacker, BattleMinionIdentifier target, boolean isTeamOne);
 
     public String getId() { return id; }
 }

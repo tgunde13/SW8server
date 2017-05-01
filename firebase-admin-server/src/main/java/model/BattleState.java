@@ -151,13 +151,14 @@ public class BattleState {
      * @param minion minion to add
      */
     public synchronized void addSynchronized(final String playerKey, final String minionKey, final PlayerMinion minion) {
-        Iterator<BattleAvatar> iterator = valueIterator();
-        while (iterator.hasNext()){
-            BattleAvatar avatar = iterator.next();
-            if (avatar.isPlayerControlled()) {
-                avatar.addMinion(minionKey, minion);
-                return;
-            }
+        BattleAvatar avatar;
+
+        if ((avatar = teamOne.get(playerKey)) != null) {
+            avatar.addMinion(minionKey, minion);
+            return;
+        } else if((avatar = teamTwo.get(playerKey)) != null) {
+            avatar.addMinion(minionKey, minion);
+            return;
         }
 
         throw new RuntimeException();

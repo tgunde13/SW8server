@@ -198,7 +198,7 @@ public class BattleState {
             target.health -= move.getMoveValue();
         } else {
             target = teamOne.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
-            target.health -= 100;
+            target.health -= move.getMoveValue();
         }
         moves.add(move);
     }

@@ -33,7 +33,7 @@ public class Minion {
 
     public void assignTypeClass(){
         switch (type){
-            case "melee":
+            case "Melee":
                 typeClass = new MeleeType();
         }
     }
@@ -62,6 +62,11 @@ public class Minion {
 
     public void createBattleStats() {
         battleStats = new BattleStats(this);
+    }
+
+    @Exclude
+    public Type getTypeClass() {
+        return typeClass;
     }
 
     /**

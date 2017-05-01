@@ -11,25 +11,28 @@ import java.util.*;
  */
 public class BattleAvatar {
     private Map<String,Minion> battleMinions;
-    private String userId;
+    private boolean isPlayerControlled;
 
     /**
      * Constructor for creating a battle avatar with a list of minions and a user ID.
-     * @param UserId Id of the user this avatar belongs to.
      */
     public BattleAvatar(){
         battleMinions = new HashMap<>();
+        isPlayerControlled = true;
     }
 
     /**
      * Constructor for a battle avatar that does not belong to a player but an environment minion.
+     * Creates a number of environment minions equal to the size of the environment minion
      * @param eMinion is the environment minion that is being fought.
      */
     public BattleAvatar(final EMinion eMinion){
+        isPlayerControlled = false;
         battleMinions = new HashMap<>();
         for (int i = 0; i < eMinion.getSize(); i++){
             Minion eMinionToPut = eMinion;
             eMinionToPut.battleStats = new BattleStats(eMinionToPut);
+            eMinionToPut.assignTypeClass();
             battleMinions.put("minion-" + i, eMinionToPut);
         }
     }
@@ -41,13 +44,6 @@ public class BattleAvatar {
      */
     public Map<String,Minion> getBattleMinions(){ return battleMinions; }
 
-
-    /**
-     * Getter for userId
-     * @return userId
-     */
-    public String getUserId() { return userId; }
-
     /**
      *
      * @return true if battle avatar is controlled by the player.
@@ -55,7 +51,7 @@ public class BattleAvatar {
      */
     @Exclude
     public boolean isPlayerControlled() {
-        return userId != null;
+        return isPlayerControlled;
     }
 
     /**
@@ -71,5 +67,10 @@ public class BattleAvatar {
         }
 
         return false;
+    }
+
+    public void addMinion(String key, PlayerMinion minion){
+        minion.battleStats = new BattleStats(minion);
+        battleMinions.put(key, minion);
     }
 }

@@ -28,10 +28,14 @@ public class BattleStateTest {
 
         Map<String, Map<String, ChosenMove>> chosenMoves = new HashMap<>();
         Map<String, ChosenMove> playerMoves = new HashMap<>();
-        playerMoves.put()
+        playerMoves.put("pMinion1", new ChosenMove("eKey1", "minion-0", null));
         chosenMoves.put("uid1", playerMoves);
 
         state.advance(chosenMoves);
+
+        // e minion 0, and only that should die
+        assertTrue(state.getTeamTwo().get("eKey1").hasAliveMinions());
+        assertFalse(state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").isAlive());
     }
 
 }

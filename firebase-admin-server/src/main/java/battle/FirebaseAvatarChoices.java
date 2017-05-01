@@ -1,12 +1,5 @@
 package battle;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.GenericTypeIndicator;
-import firebase.FirebaseValues;
-import model.BattleAvatar;
-import model.BattleState;
-import model.Minion;
-
 import java.util.*;
 
 /**

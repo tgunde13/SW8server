@@ -9,9 +9,14 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by Tobias on 25/04/2017.
+ * Some choices that a player has when choosing moves.
  */
-public class AvailableMoves extends FirebaseAvatarChoices {
+class AvailableMoves extends FirebaseAvatarChoices {
+    /**
+     * Constructor from values.
+     * @param turn turn
+     * @param state state to generate moves from
+     */
     AvailableMoves(final int turn, final BattleState state) {
         super(turn, generateMoves(state));
     }
@@ -25,9 +30,9 @@ public class AvailableMoves extends FirebaseAvatarChoices {
     private static Map<String, Map<String, ChosenMove>> generateMoves(final BattleState state) {
         final Map<String, Map<String, ChosenMove>> moves = new HashMap<>();
 
-        Iterator<Map.Entry<String, BattleAvatar>> iterator = state.EntryIterator();
+        final Iterator<Map.Entry<String, BattleAvatar>> iterator = state.EntryIterator();
         while (iterator.hasNext()){
-            Map.Entry<String, BattleAvatar> avatar = iterator.next();
+            final Map.Entry<String, BattleAvatar> avatar = iterator.next();
             if (avatar.getValue().isPlayerControlled()) {
                 final Map<String, ChosenMove> avatarChoices = new HashMap<>();
 

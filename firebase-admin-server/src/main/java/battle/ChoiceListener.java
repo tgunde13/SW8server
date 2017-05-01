@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * Whenever a data change is accepted, an action is called.
  * A data change is accepted if all players have chosen a move for all their minions.
  */
-public class ChoiceListener extends DataChangeListener {
+class ChoiceListener extends DataChangeListener {
     private final Consumer<FirebaseAvatarChoices> action;
 
     /**

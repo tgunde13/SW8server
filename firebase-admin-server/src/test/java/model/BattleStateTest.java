@@ -34,13 +34,13 @@ public class BattleStateTest {
 
         BattleMinionIdentifier unknownIdentifier = new BattleMinionIdentifier("avatar3", "minion-1");
 
-        battleState.doMove(attackerId, targetId);
-        battleState.doMove(targetId, attackerId);
+        battleState.performAndReportMove(attackerId, targetId);
+        battleState.performAndReportMove(targetId, attackerId);
 
-        battleState.doMove(unknownIdentifier, unknownIdentifier);
-        battleState.doMove(unknownIdentifier, targetId);
-        battleState.doMove(attackerId, unknownIdentifier);
-        battleState.doMove(attackerId, attackerId);
+        battleState.performAndReportMove(unknownIdentifier, unknownIdentifier);
+        battleState.performAndReportMove(unknownIdentifier, targetId);
+        battleState.performAndReportMove(attackerId, unknownIdentifier);
+        battleState.performAndReportMove(attackerId, attackerId);
 
         assertTrue(battleState.getTeamOne().get("avatar1").getBattleMinions().get("minion-1").health == 900);
         assertTrue(battleState.getTeamTwo().get("avatar2").getBattleMinions().get("minion-1").health == 900);

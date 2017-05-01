@@ -9,7 +9,7 @@ import java.util.Map;
 /**
  * Created by Tobias on 26/04/2017.
  */
-public class AvailableMinionChoices extends PlayerChoices {
+public class AvailableMinionChoices extends FirebaseAvatarChoices {
     private static final String CHOOSE_MINIONS_PREFIX = "minion-";
 
     public AvailableMinionChoices(final BattleState state, final int maxMinionsPerPlayer) {

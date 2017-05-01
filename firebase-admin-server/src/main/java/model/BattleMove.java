@@ -15,6 +15,8 @@ public class BattleMove {
     private BattleMove(){
     }
 
+
+
     public BattleMinionIdentifier getAttacker(){ return  attackingMinionKey;}
 
     public BattleMinionIdentifier getTarget() { return targetMinionKey;}

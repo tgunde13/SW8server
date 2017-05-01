@@ -1,6 +1,3 @@
-import battle.ChoiceListener;
-import battle.ChosenMove;
-import battle.PlayerChoices;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
@@ -8,8 +5,6 @@ import com.google.firebase.database.*;
 import task.TaskManager;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by lapiki on 3/13/17.
@@ -27,7 +22,7 @@ public class Main {
         Map<String, ChosenMove> a1 = new HashMap<>();
         a1.put("m1", new ChosenMove("m1a", "m1m", null));
         map.put("a1", a1);
-        FirebaseDatabase.getInstance().getReference("a").setValue(new PlayerChoices(10, map));
+        FirebaseDatabase.getInstance().getReference("a").setValue(new FirebaseAvatarChoices(10, map));
 
 
 

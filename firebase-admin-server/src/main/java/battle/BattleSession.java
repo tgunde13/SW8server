@@ -4,7 +4,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import firebase.DataChangeListenerAdapter;
 import firebase.FirebaseNodes;
-import firebase.FirebaseValues;
 import model.BattleState;
 import model.PlayerMinion;
 
@@ -96,7 +95,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvanceChooseMinions(final PlayerChoices moves) {
+    private void tryAdvanceChooseMinions(final FirebaseAvatarChoices moves) {
         System.out.println("TOB: BattleSession, tryAdvanceChooseMinions");
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
@@ -118,7 +117,7 @@ public class BattleSession {
      * This method also updates Firebase and schedules a timeout.
      * @param moves chosen moves
      */
-    private void tryAdvance(final PlayerChoices moves) {
+    private void tryAdvance(final FirebaseAvatarChoices moves) {
         // Advance to next turn with a lock
         final boolean succeeded = tryAdvanceTurn(moves.getTurn());
         if (!succeeded) {

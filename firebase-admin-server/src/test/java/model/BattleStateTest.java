@@ -13,6 +13,36 @@ import static org.junit.Assert.*;
  */
 public class BattleStateTest {
     @Test
+    public void getTeams() throws Exception {
+        Map<String, BattleAvatar> team1 = new HashMap<>();
+        team1.put("key1", new BattleAvatar());
+        Map<String, BattleAvatar> team2 = new HashMap<>();
+        BattleState state = new BattleState(team1, team2);
+
+        assertEquals(1, state.getTeamOne().size());
+        assertNotNull(state.getTeamOne().get("key1"));
+
+
+        assertEquals(0, state.getTeamTwo().size());
+        assertNull(state.getTeamTwo().get("key1"));
+    }
+
+    @Test
+    public void isOver() throws Exception {
+        // Player team
+        final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+        final BattleAvatar playerAvatar = new BattleAvatar();
+        playerAvatar.addMinion("pMinion1", new PlayerMinion("name1", 1, 6, 1, 1, "Melee"));
+        playerTeam.put("uid1", playerAvatar);
+
+        // E team
+        final Map<String, BattleAvatar> eTeam = new HashMap<>();
+        eTeam.put("eKey1", new BattleAvatar(new EMinionTemplate(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee")));
+
+        final BattleState state = new BattleState(playerTeam, eTeam);
+    }
+
+    @Test
     public void doMove() throws Exception {
 
         Map<String, BattleAvatar> teamOne = new HashMap<>();
@@ -56,7 +86,7 @@ public class BattleStateTest {
 
         // E team
         final Map<String, BattleAvatar> eTeam = new HashMap<>();
-        eTeam.put("eKey1", new BattleAvatar(new EMinion(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee")));
+        eTeam.put("eKey1", new BattleAvatar(new EMinionTemplate(57.0, 10.0, 3, "name", 1, 5, 1, 1, "Melee")));
 
         final BattleState state = new BattleState(playerTeam, eTeam);
 
@@ -86,7 +116,7 @@ public class BattleStateTest {
 
         // E team
         final Map<String, BattleAvatar> eTeam = new HashMap<>();
-        eTeam.put("eKey1", new BattleAvatar(new EMinion(57.0, 10.0, 3, "name", 2, 5, 1, 1, "Melee")));
+        eTeam.put("eKey1", new BattleAvatar(new EMinionTemplate(57.0, 10.0, 3, "name", 2, 5, 1, 1, "Melee")));
 
         final BattleState state = new BattleState(playerTeam, eTeam);
 
@@ -95,6 +125,10 @@ public class BattleStateTest {
         playerMoves.put("pMinion1", new ChosenMove("eKey1", "minion-0", null));
         final Map<String, Map<String, ChosenMove>> chosenMoves = new HashMap<>();
         chosenMoves.put("uid1", playerMoves);
+
+
+        // minion-0 should have 2 health
+        assertEquals(2, state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").getBattleStats().getCurrentHP());
 
         // Advance
         state.advance(chosenMoves);

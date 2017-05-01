@@ -18,8 +18,8 @@ public class BattleStateTest {
         Map<String, BattleAvatar> teamOne = new HashMap<>();
         Map<String, BattleAvatar> teamTwo = new HashMap<>();
 
-        EMinion attackerEMinion = new EMinion(57.0, 10.0, 3, "name", 1000, 5, 100, 1, "Melee");
-        EMinion targetEMinion = new EMinion(57.0, 10.0, 3, "name", 1000, 5, 100, 1, "Melee");
+        EMinionTemplate attackerEMinion = new EMinionTemplate(57.0, 10.0, 3, "name", 1000, 5, 100, 1, "Melee");
+        EMinionTemplate targetEMinion = new EMinionTemplate(57.0, 10.0, 3, "name", 1000, 5, 100, 1, "Melee");
 
         BattleAvatar avatar1 = new BattleAvatar(attackerEMinion);
         BattleAvatar avatar2 = new BattleAvatar(targetEMinion);
@@ -42,8 +42,8 @@ public class BattleStateTest {
         battleState.performAndReportMove(attackerId, unknownIdentifier);
         battleState.performAndReportMove(attackerId, attackerId);
 
-        assertTrue(battleState.getTeamOne().get("avatar1").getBattleMinions().get("minion-1").health == 900);
-        assertTrue(battleState.getTeamTwo().get("avatar2").getBattleMinions().get("minion-1").health == 900);
+        assertTrue(battleState.getTeamOne().get("avatar1").getBattleMinions().get("minion-1").battleStats.getCurrentHP() == 900);
+        assertTrue(battleState.getTeamTwo().get("avatar2").getBattleMinions().get("minion-1").battleStats.getCurrentHP() == 900);
     }
 
     @Test

@@ -7,9 +7,7 @@ import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -65,7 +63,7 @@ class SoloPveBattleTask extends BattleTask {
      * If environment squad is not found, a NOT_FOUND is responded.
      * @param action action to call if successful
      */
-    private void getEnvironmentSquad(final BiConsumer<String, EMinion> action) {
+    private void getEnvironmentSquad(final BiConsumer<String, EMinionTemplate> action) {
         final Zone zone;
         final String key;
 
@@ -87,7 +85,7 @@ class SoloPveBattleTask extends BattleTask {
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
         .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
             if (dataSnapshot.exists()) {
-                action.accept(key, dataSnapshot.getValue(EMinion.class));
+                action.accept(key, dataSnapshot.getValue(EMinionTemplate.class));
             } else {
                 ResponseHandler.respond(userId, HttpCodes.NOT_FOUND);
             }

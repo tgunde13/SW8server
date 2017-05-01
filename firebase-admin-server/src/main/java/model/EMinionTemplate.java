@@ -5,7 +5,7 @@ import java.util.Random;
 /**
  * A minion of the map.
  */
-public class EMinion extends Minion {
+public class EMinionTemplate extends Minion {
     private static final int MAX_LEVEL = 50;
     private final double lon;
     private final double lat;
@@ -17,14 +17,14 @@ public class EMinion extends Minion {
      * @param lat the latitude of the minion
      * @param lon the longitude of the minion
      */
-    public EMinion(final double lat, final double lon, int size, String name, int health, int speed, int power, int level, String type) {
+    public EMinionTemplate(final double lat, final double lon, int size, String name, int health, int speed, int power, int level, String type) {
         super(name, health, speed, power, level, type);
         this.lat = lat;
         this.lon = lon;
         this.size = size;
     }
 
-    public static EMinion generateEMinionData(double lat, double lon) {
+    public static EMinionTemplate generateEMinionData(double lat, double lon) {
 
         int level;
         int size;
@@ -66,10 +66,14 @@ public class EMinion extends Minion {
                 power = 1*level;
                 break;
         }
-        return new EMinion(lat, lon, size, name, health, speed, power, level, type);
+        return new EMinionTemplate(lat, lon, size, name, health, speed, power, level, type);
     }
 
-    private EMinion() {
+    public Minion createMinion(){
+        return new Minion(name, health, speed, power, level, type);
+    }
+
+    private EMinionTemplate() {
         lon = 0;
         lat = 0;
         size = 0;

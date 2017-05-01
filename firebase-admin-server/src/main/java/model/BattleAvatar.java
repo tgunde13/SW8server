@@ -26,11 +26,11 @@ public class BattleAvatar {
      * Creates a number of environment minions equal to the size of the environment minion
      * @param eMinion is the environment minion that is being fought.
      */
-    public BattleAvatar(final EMinion eMinion){
+    public BattleAvatar(final EMinionTemplate eMinion){
         isPlayerControlled = false;
         battleMinions = new HashMap<>();
         for (int i = 0; i < eMinion.getSize(); i++){
-            Minion eMinionToPut = eMinion;
+            Minion eMinionToPut = eMinion.createMinion();
             eMinionToPut.battleStats = new BattleStats(eMinionToPut);
             eMinionToPut.assignTypeClass();
             battleMinions.put("minion-" + i, eMinionToPut);

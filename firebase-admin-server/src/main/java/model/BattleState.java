@@ -2,7 +2,6 @@ package model;
 
 import battle.AvatarChoices;
 import battle.ChosenMove;
-import battle.FirebaseAvatarChoices;
 
 import javax.annotation.Nonnull;
 import java.util.*;
@@ -44,10 +43,19 @@ public class BattleState {
     }
 
     /**
-     * Advances to the next turn by performance moves.
+     * Advances to the next turn by performing moves.
      * @param chosenMoves the moves to perform
      */
     public void advance(final Map<String, Map<String, ChosenMove>> chosenMoves) {
+        moves.clear();
+        advanceHelper(chosenMoves);
+    }
+
+    /**
+     * Performs some moves en a prioritised way.
+     * @param chosenMoves the moves to perform
+     */
+    private void advanceHelper(final Map<String, Map<String, ChosenMove>> chosenMoves) {
         final AvatarChoices priorityMoves = getHighestPriorityMoves(chosenMoves);
 
         if (priorityMoves.getMoves().isEmpty()) {
@@ -61,21 +69,20 @@ public class BattleState {
             for (final Map.Entry<String, ChosenMove> playerEntries : moveEntries.getValue().entrySet()) {
                 final String attackerMinionKey = playerEntries.getKey();
 
-                performMove(new BattleMinionIdentifier(attackerAvatarKey, attackerMinionKey), playerEntries.getValue());
+                performAndReportMove(new BattleMinionIdentifier(attackerAvatarKey, attackerMinionKey), playerEntries.getValue());
 
                 // Remove move
                 chosenMoves.get(attackerAvatarKey).remove(attackerMinionKey);
             }
         }
 
-        advance(chosenMoves);
+        advanceHelper(chosenMoves);
     }
 
     /**
      * Get the moves with highest priority.
      * Minions with higher speed performs moves first.
      * Minions with same speed, but higher level, performs moves first.
-     * Minions with same speed and level performs moves in a random order.
      * @param moves moves to prioritise
      * @return the moves with highest priority
      */
@@ -154,8 +161,8 @@ public class BattleState {
      * @param attacker two keys used to identify a specific minion in a battlestate that represents the minion performing the move
      * @param target two keys used to identify a specific minion in a battlestate that represents the target of the move
      */
-    public void performMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
-        System.out.println("TOB, BattleState, performMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
+    public void performAndReportMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
+        System.out.println("TOB, BattleState, performAndReportMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey());
         Minion minionAttacker;
         BattleMove move;
 

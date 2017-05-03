@@ -17,19 +17,6 @@ public class Main {
         //new Generator().start();
         TaskManager.start();
 
-/*
-        Map<String, Map<String, ChosenMove>> map = new HashMap<>();
-        Map<String, ChosenMove> a1 = new HashMap<>();
-        a1.put("m1", new ChosenMove("m1a", "m1m", null));
-        map.put("a1", a1);
-        FirebaseDatabase.getInstance().getReference("a").setValue(new FirebaseAvatarChoices(10, map));
-
-
-
-        FirebaseDatabase.getInstance().getReference("battles/-KiebIGetyIEI0x5Tema/chosenMoves")
-                .addListenerForSingleValueEvent(new ChoiceListener(playerChoices -> {}));
-*/
-
         Thread.currentThread().join();
     }
 

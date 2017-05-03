@@ -2,8 +2,6 @@ package model;
 
 import battle.AvatarChoices;
 import battle.ChosenMove;
-
-import javax.annotation.Nonnull;
 import java.util.*;
 
 
@@ -31,15 +29,32 @@ public class BattleState {
      */
     public boolean isOver() {
 
-        Iterator<BattleAvatar> iterator = valueIterator();
-        while (iterator.hasNext()){
-            BattleAvatar avatar = iterator.next();
-            if (avatar.isPlayerControlled() && avatar.hasAliveMinions()) {
-                return false;
+        boolean teamOneAlive = false;
+        boolean teamTwoAlive = false;
+
+        if(teamOne.values().isEmpty() || teamTwo.values().isEmpty()){
+            return true;
+        }
+
+        for(BattleAvatar avatar: teamOne.values()){
+            if(avatar.hasAliveMinions()){
+                teamOneAlive = true;
+                break;
             }
         }
 
-        return true;
+        for(BattleAvatar avatar: teamTwo.values()){
+            if(avatar.hasAliveMinions()){
+                teamTwoAlive = true;
+                break;
+            }
+        }
+
+        if(teamOneAlive && teamTwoAlive){
+            return true;
+        }
+
+        return false;
     }
 
     /**
@@ -197,7 +212,6 @@ public class BattleState {
         moves.add(move);
     }
 
-    @Nonnull
     public Iterator<Map.Entry<String, BattleAvatar>> EntryIterator() {
         Set<Map.Entry<String, BattleAvatar>> avatars = new HashSet<>();
         avatars.addAll(teamOne.entrySet());
@@ -205,7 +219,6 @@ public class BattleState {
         return avatars.iterator();
     }
 
-    @Nonnull
     public Iterator<BattleAvatar> valueIterator() {
         List<BattleAvatar> avatars = new ArrayList<>();
         avatars.addAll(teamOne.values());

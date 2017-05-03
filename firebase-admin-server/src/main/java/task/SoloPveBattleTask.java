@@ -41,7 +41,7 @@ class SoloPveBattleTask extends BattleTask {
             final Map<String, BattleAvatar> playerTeam = new HashMap<>();
             playerTeam.put(userId, new BattleAvatar());
 
-            final Map<String, BattleAvatar> eTeam = new HashMap<>();
+            final Map<String, BattleAvatar> eTeam =     new HashMap<>();
             eTeam.put(key, new BattleAvatar(eMinion));
 
             final BattleState state = new BattleState(playerTeam, eTeam);

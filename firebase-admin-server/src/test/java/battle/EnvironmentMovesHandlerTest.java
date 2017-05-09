@@ -46,10 +46,10 @@ public class EnvironmentMovesHandlerTest {
 
     @Test
     public void randomMoves() throws Exception {
-        int minion1 = 0;
-        int minion2 = 0;
+        int pMinion1Count = 0;
+        int pMinion2Count = 0;
 
-        for(int i = 0; i < 100; i++) {
+        for (int i = 0; i < 100; i++) {
 
             // Player team
             final Map<String, BattleAvatar> playerTeam = new HashMap<>();
@@ -69,13 +69,14 @@ public class EnvironmentMovesHandlerTest {
             EnvironmentMovesHandler.addMoves(state, choices);
 
             if(choices.getMoves().get("eKey1").get("minion-0").getMinionKey().equals("pMinion1")){
-                minion1++;
+                pMinion1Count++;
             } else {
-                minion2++;
+                pMinion2Count++;
             }
         }
 
-        System.out.println(minion1 + " " + minion2);
+        assertTrue(pMinion1Count > 25);
+        assertTrue(pMinion2Count > 25);
     }
 
     @Test

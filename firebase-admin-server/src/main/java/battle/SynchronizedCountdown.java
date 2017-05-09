@@ -39,10 +39,8 @@ class SynchronizedCountdown {
      * Decrements the count by a given amount.
      * @param amount the amount
      */
-    synchronized void step(final int amount) {
+    void step(final int amount) {
         for (int i = 0; i < amount; i++) {
-            // It is okay, to call the synchronized step,
-            // since Java used reentrant synchronization
             step();
         }
     }

@@ -5,7 +5,7 @@ package firebase;
  */
 public class FirebaseNodes {
     // Tasks
-    public static final String TASKS = "testing";
+    public static final String TASKS = "tasks";
     public static final String REQUESTS = "requests";
     public static final String RESPONSES = "responses";
 
@@ -29,7 +29,7 @@ public class FirebaseNodes {
     public static final String ENVIRONMENT_SQUADS = "eSquads";
 
     // Battles
-    public static final String BATTLES = "battlesTest";
+    public static final String BATTLES = "battles";
     public static final String BATTLE_CHOSEN_MOVES = "chosenMoves";
     public static final String BATTLE_STATE = "state";
 

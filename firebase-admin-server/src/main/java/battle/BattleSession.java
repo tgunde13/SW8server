@@ -14,6 +14,7 @@ import java.util.*;
  */
 public class BattleSession {
     static final int CHOOSE_MINIONS_TURN = 0;
+    private static final int REMOVE_SESSION_TIMEOUT = 30*1000;
 
     private final BattleState state;
     private final int maxMinionsPerPlayer;
@@ -158,10 +159,27 @@ public class BattleSession {
 
         chosenMovesRef.setValue(new AvailableMoves(serverTurn, state)).addOnSuccessListener(aVoid -> {
             // If if game is over
+            state.evaluateStatus();
             if (state.isOver()) {
                 // Stop listening
                 chosenMovesRef.removeEventListener(listener);
                 System.out.println("TOB: BattleSession, updateFirebaseAndSchedule, game is over");
+
+                //Create rewards
+                Rewards rewards = new Rewards(state);
+                // Apply rewards
+                applyRewardsAndRemoveStatus(state, rewards);
+                // Upload to Firebase
+                ref.setValue(rewards.rewards);
+
+                final Timer timer = new Timer(true);
+                timer.schedule(new TimerTask() {
+                    @Override
+                    public void run() {
+                        ref.removeValue();
+                    }
+                }, REMOVE_SESSION_TIMEOUT);
+
                 return;
             }
 
@@ -240,5 +258,41 @@ public class BattleSession {
         }
 
         return false;
+    }
+
+
+    private void applyRewardsAndRemoveStatus(BattleState state, Rewards rewards){
+        for(Map.Entry<String, Reward> entry : rewards.rewards.entrySet()){
+            final DatabaseReference playerRef = FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(entry.getKey());
+
+            playerRef.child(FirebaseNodes.PLAYER_STATUS).removeValue();
+
+            // Remove dead minions
+            for(String deadMinion : entry.getValue().getDeadMinions()) {
+                playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(deadMinion).removeValue();
+            }
+
+            // Add new minion
+            if(!(entry.getValue().getMinion() == null)){
+                playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(entry.getValue().getMinion());
+            }
+
+            // Add gold to player
+            playerRef.child(FirebaseNodes.PLAYER_GOLD).addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
+                playerRef.child(FirebaseNodes.PLAYER_GOLD).setValue((int) (long) (Long)dataSnapshot.getValue() + entry.getValue().getGold());
+
+                // Add xp to each minion that is still alive on the specific players team
+                for(String minionKey : entry.getValue().getUsedMinions()){
+                    playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(minionKey).addListenerForSingleValueEvent(new DataChangeListenerAdapter(minionDataSnapshot -> {
+                        PlayerMinion minion = minionDataSnapshot.getValue(PlayerMinion.class);
+                        minion.addXP(entry.getValue().getXp());
+                        playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(minionKey).setValue(minion);
+                    }));
+                }
+            }));
+
+
+        }
+
     }
 }

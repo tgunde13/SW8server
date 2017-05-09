@@ -9,6 +9,7 @@ import java.util.Map;
 public class Player {
     private String name;
     private int id;
+    private int gold = 0;
     private Map<String, PlayerMinion> minions;
 
     public Player(final String name, final int id) {
@@ -26,11 +27,7 @@ public class Player {
         return id;
     }
 
+    public int getGold() {return gold;}
+
     public Map<String, PlayerMinion> getMinions() { return minions; }
-
-    public void setId(final int id) { this.id = id; }
-
-    public void setName(final String name) {this.name = name;}
-
-    public void setMinions(final Map<String, PlayerMinion> minions) { this.minions = minions; }
 }

@@ -2,18 +2,25 @@ package model;
 
 import battle.AvatarChoices;
 import battle.ChosenMove;
+import com.google.firebase.database.Exclude;
+
 import java.util.*;
 
 
 public class BattleState {
+    private static final String TEAM_TWO_WIN = "teamTwoWin";
+    private static final String TEAM_ONE_WIN = "teamOneWin";
+    private static final String RUNNING  = "running";
     private Map<String, BattleAvatar> teamOne;
     private Map<String, BattleAvatar> teamTwo;
     private List<BattleMove> moves;
+    private String status;
 
     public BattleState(final Map<String, BattleAvatar> teamOne, final Map<String, BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
         moves = new ArrayList<BattleMove>();
+        status = "running";
     }
 
     private BattleState() {
@@ -24,37 +31,50 @@ public class BattleState {
     public List<BattleMove> getMoves() { return moves; }
 
     /**
-     * Gets if the battle is over.
+     * Gets if the battle is over
      * @return true if, and only if, the battle is over
      */
-    public boolean isOver() {
-
-        boolean teamOneAlive = false;
-        boolean teamTwoAlive = false;
-
-        if(teamOne.values().isEmpty() || teamTwo.values().isEmpty()){
+    public boolean isOver(){
+        if(status == TEAM_ONE_WIN || status == TEAM_TWO_WIN){
             return true;
+        }
+        return false;
+    }
+
+    /**
+     * Evaluates the status of the battle to determine if teamOne or teamTwo has won or if the battle is still ongoing
+     */
+    public void evaluateStatus() {
+
+        boolean teamOneDead = true;
+        boolean teamTwoDead = true;
+
+        if(teamOne.values().isEmpty()){
+            status = TEAM_TWO_WIN;
+            return;
+        } else if(teamTwo.values().isEmpty()){
+            status = TEAM_ONE_WIN;
+            return;
         }
 
         for(BattleAvatar avatar: teamOne.values()){
             if(avatar.hasAliveMinions()){
-                teamOneAlive = true;
+                teamOneDead = false;
                 break;
             }
         }
 
         for(BattleAvatar avatar: teamTwo.values()){
             if(avatar.hasAliveMinions()){
-                teamTwoAlive = true;
+                teamTwoDead = false;
                 break;
             }
         }
-
-        if(teamOneAlive && teamTwoAlive){
-            return true;
+        if(teamOneDead){
+            status = TEAM_TWO_WIN;
+        } else if(teamTwoDead) {
+            status = TEAM_ONE_WIN;
         }
-
-        return false;
     }
 
     /**
@@ -226,4 +246,6 @@ public class BattleState {
         avatars.addAll(teamTwo.values());
         return avatars.iterator();
     }
+
+    public String getStatus(){ return status; }
 }

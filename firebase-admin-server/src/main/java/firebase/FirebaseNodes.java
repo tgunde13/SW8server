@@ -20,6 +20,7 @@ public class FirebaseNodes {
     public static final String PLAYER_MINIONS = "minions";
     public static final String PLAYER_VISIBLE = "visible";
     public static final String PLAYER_STATUS = "status";
+    public static final String PLAYER_GOLD = "gold";
 
     // Avatar name index
     public static final String NAME_INDEX = "nameIndex";
@@ -28,7 +29,7 @@ public class FirebaseNodes {
     public static final String ENVIRONMENT_SQUADS = "eSquads";
 
     // Battles
-    public static final String BATTLES = "battles";
+    public static final String BATTLES = "battlesTest";
     public static final String BATTLE_CHOSEN_MOVES = "chosenMoves";
     public static final String BATTLE_STATE = "state";
 

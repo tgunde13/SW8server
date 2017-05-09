@@ -8,8 +8,8 @@ import java.util.*;
 
 
 public class BattleState {
-    private static final String TEAM_TWO_WIN = "teamTwoWin";
-    private static final String TEAM_ONE_WIN = "teamOneWin";
+    public static final String TEAM_TWO_WIN = "teamTwoWin";
+    public static final String TEAM_ONE_WIN = "teamOneWin";
     private static final String RUNNING  = "running";
     private Map<String, BattleAvatar> teamOne;
     private Map<String, BattleAvatar> teamTwo;
@@ -51,10 +51,8 @@ public class BattleState {
 
         if(teamOne.values().isEmpty()){
             status = TEAM_TWO_WIN;
-            return;
         } else if(teamTwo.values().isEmpty()){
             status = TEAM_ONE_WIN;
-            return;
         }
 
         for(BattleAvatar avatar: teamOne.values()){

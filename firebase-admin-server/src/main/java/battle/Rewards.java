@@ -30,19 +30,19 @@ public class Rewards {
         List<String> deadMinions = new ArrayList<>();
         List<String> usedMinions = new ArrayList<>();
 
-        if(battleState.getStatus() == "teamOneWon"){
+        if(battleState.getStatus().equals(BattleState.TEAM_ONE_WIN)){
             teamOneGoldReward = 2;
             teamTwoGoldReward = 1;
             for(Map.Entry<String, BattleAvatar> entry : battleState.getTeamTwo().entrySet()){
                 for (Minion minion : entry.getValue().getBattleMinions().values()) {
                     teamOneXpReward += minion.getLevel() * XP_MULTIPLIER;
 
-                    if (minion == null && entry.getValue().isPlayerControlled()){
+                    if (rewardMinion == null && !entry.getValue().isPlayerControlled()){
                         rewardMinion = minion;
                     }
                 }
             }
-        } else if(battleState.getStatus() == "teamTwoWon"){
+        } else if(battleState.getStatus().equals(BattleState.TEAM_TWO_WIN)){
             teamOneGoldReward = 1;
             teamTwoGoldReward = 2;
             for(Map.Entry<String, BattleAvatar> entry : battleState.getTeamOne().entrySet()){
@@ -62,7 +62,7 @@ public class Rewards {
             }
             rewards.put(entry.getKey(), new Reward(teamOneGoldReward, teamOneXpReward, rewardMinion, deadMinions, usedMinions));
         }
-        for(Map.Entry<String, BattleAvatar> entry : battleState.getTeamOne().entrySet()){
+        for(Map.Entry<String, BattleAvatar> entry : battleState.getTeamTwo().entrySet()){
             if(entry.getValue().isPlayerControlled()) {
                 for (Map.Entry<String, Minion> minionEntry : entry.getValue().getBattleMinions().entrySet()) {
                     if (!minionEntry.getValue().getBattleStats().isAlive()) {

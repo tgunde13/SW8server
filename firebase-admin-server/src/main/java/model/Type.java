@@ -13,4 +13,9 @@ public abstract class Type {
     public abstract List<BattleMinionIdentifier> getAvailableMoves(BattleState battleState, BattleMinionIdentifier attackerId);
 
     public String getId() { return id; }
+
+    public List<BattleMinionIdentifier> getAvailableMoves(final BattleState state, final BattleMinionIdentifier attacker) {
+        // TODO
+        return null;
+    }
 }

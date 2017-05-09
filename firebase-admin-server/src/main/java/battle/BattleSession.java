@@ -125,6 +125,9 @@ public class BattleSession {
             return;
         }
 
+        // Generate environment moves
+        EnvironmentMovesHandler.addMoves(state, moves);
+
         state.advance(moves.getMoves());
 
         updateFirebaseAndSchedule();

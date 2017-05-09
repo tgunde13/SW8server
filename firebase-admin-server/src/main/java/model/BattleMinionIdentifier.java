@@ -39,4 +39,24 @@ public class BattleMinionIdentifier {
     public String getMinionKey() {
         return  minionKey;
     }
+
+    @Override
+    public boolean equals(Object obj){
+        if(obj == null){
+            return false;
+        }
+
+        BattleMinionIdentifier identifier = (BattleMinionIdentifier)obj;
+
+        if(!(avatarKey.equals(identifier.avatarKey))){
+            return false;
+        }
+
+        if(!(minionKey.equals(identifier.minionKey))){
+            return false;
+        }
+
+        return true;
+
+    }
 }

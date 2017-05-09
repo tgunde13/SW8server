@@ -10,5 +10,7 @@ public abstract class Type {
 
     public abstract BattleMove calculateMove(BattleState battleState, BattleMinionIdentifier attacker, BattleMinionIdentifier target, boolean isTeamOne);
 
+    public abstract List<BattleMinionIdentifier> getAvailableMoves(BattleState battleState, BattleMinionIdentifier attackerId);
+
     public String getId() { return id; }
 }

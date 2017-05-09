@@ -42,13 +42,26 @@ public class ZoneTest {
     @Test
     public void generateMapMinion() throws Exception {
         Zone a = new Zone(1, 2);
+
+        int lowLatCount = 0, highLatCount = 0;
+
         for (int i = 0; i < 100; i++) {
             EMinionTemplate t = a.generateMapMinion();
+
             assertTrue(t.getLat() >= 0.01);
             assertTrue(t.getLat() < 0.02);
             assertTrue(t.getLon() >= 0.02);
             assertTrue(t.getLon() < 0.03);
+
+            if (t.getLat() < 0.015) {
+                lowLatCount++;
+            } else {
+                highLatCount++;
+            }
         }
+
+        assertTrue(25 < lowLatCount);
+        assertTrue(25 < highLatCount);
     }
 
     @Test

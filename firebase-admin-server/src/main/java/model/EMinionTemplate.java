@@ -49,7 +49,7 @@ public class EMinionTemplate extends Minion {
                 type = "Melee";
                 health = 100*level;
                 speed = 20;
-                power = 40*level;
+                power = 35*level;
                 break;
             case 1:
                 name = "Spearman";

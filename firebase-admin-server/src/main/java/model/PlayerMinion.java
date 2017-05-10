@@ -19,8 +19,19 @@ public class PlayerMinion extends Minion {
     public void addXP(int xpToAdd) {
         xp += xpToAdd;
         while(xp > level * 100){
-            level++;
-            xp = xp-(level * 100);
+            levelUp();
+        }
+    }
+
+    private void levelUp(){
+        level++;
+        xp = xp-(level * 100);
+        if(name == "Swordman"){
+            health += 100;
+            power += 35;
+        } else if (name == "Spearman"){
+            health += 200;
+            power += 20;
         }
     }
 }

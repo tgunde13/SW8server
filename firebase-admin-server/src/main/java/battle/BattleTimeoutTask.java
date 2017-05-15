@@ -11,7 +11,7 @@ import java.util.function.Consumer;
  * this will advance.
  */
 class BattleTimeoutTask extends TimerTask {
-    private static final int TIMEOUT = 1000 * 1000; // 30 seconds in milliseconds
+    private static final int TIMEOUT = 30 * 1000; // 30 seconds in milliseconds
 
     private final int timeoutTurn;
     private final BattleSession session;

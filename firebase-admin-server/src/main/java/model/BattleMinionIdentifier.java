@@ -12,7 +12,7 @@ public class BattleMinionIdentifier {
      * @param avatarKey the key of the avatar that this minion is owned by
      * @param minionKey the key of the minion that we want to get
      */
-    public BattleMinionIdentifier(String avatarKey, String minionKey){
+    public BattleMinionIdentifier(final String avatarKey, final String minionKey){
         this.avatarKey = avatarKey;
         this.minionKey = minionKey;
     }
@@ -20,7 +20,7 @@ public class BattleMinionIdentifier {
     /**
      * Default constructor
      */
-    public BattleMinionIdentifier(){
+    protected BattleMinionIdentifier(){
 
     }
 
@@ -41,22 +41,14 @@ public class BattleMinionIdentifier {
     }
 
     @Override
-    public boolean equals(Object obj){
-        if(obj == null){
+    public boolean equals(final Object obj) {
+        if (obj == null) {
             return false;
         }
 
-        BattleMinionIdentifier identifier = (BattleMinionIdentifier)obj;
+        final BattleMinionIdentifier identifier = (BattleMinionIdentifier) obj;
 
-        if(!(avatarKey.equals(identifier.avatarKey))){
-            return false;
-        }
-
-        if(!(minionKey.equals(identifier.minionKey))){
-            return false;
-        }
-
-        return true;
+        return avatarKey.equals(identifier.avatarKey) && minionKey.equals(identifier.minionKey);
 
     }
 }

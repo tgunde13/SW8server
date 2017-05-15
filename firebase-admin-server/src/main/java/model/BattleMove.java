@@ -14,7 +14,7 @@ public class BattleMove {
      * @param targetMinionKeys key of the minion that is the target of the moveValue
      * @param moveValue the value of the moveValue
      */
-    public BattleMove(final BattleMinionIdentifier attackingMinionKey, final BattleMinionIdentifier targetMinionKeys, int moveValue){
+    public BattleMove(final BattleMinionIdentifier attackingMinionKey, final BattleMinionIdentifier targetMinionKeys, final int moveValue){
         this.attackingMinionKey = attackingMinionKey;
         this.targetMinionKey = targetMinionKeys;
         this.moveValue = moveValue;

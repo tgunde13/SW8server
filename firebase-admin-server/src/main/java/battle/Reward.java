@@ -8,7 +8,7 @@ import java.util.List;
 /**
  * A class representing a reward, has a gold value, xp value and a minion value
  */
-public class Reward {
+class Reward {
     private int gold;
     private int xp;
     private Minion minion;
@@ -21,8 +21,9 @@ public class Reward {
      * @param xp the amount of xp to be awarded
      * @param minion the minion to be awarded
      * @param deadMinions a list of minions that have died
+     * @param usedMinions a list of minions that are used but alive
      */
-    public Reward(int gold, int xp, Minion minion, List<String> deadMinions, List<String> usedMinions){
+    public Reward(final int gold, final int xp, final Minion minion, final List<String> deadMinions, final List<String> usedMinions){
         this.gold = gold;
         this.xp = xp;
         this.minion = minion;
@@ -59,5 +60,9 @@ public class Reward {
      */
     public List<String> getDeadMinions() {return deadMinions;}
 
+    /**
+     * Getter for used minions
+     * @return a list of minions that a user have used but not lost
+     */
     public List<String> getUsedMinions() {return usedMinions;}
 }

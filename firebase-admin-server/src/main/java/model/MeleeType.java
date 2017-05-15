@@ -1,7 +1,6 @@
 package model;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -10,18 +9,21 @@ import java.util.Map;
  */
 public class MeleeType extends Type {
 
-    public MeleeType(){ id = "Melee"; }
+    /**
+     * Default constructor
+     */
+    public MeleeType(){}
 
 
     /**
-     *
-     * @param battleState
-     * @param target
-     * @param attacker
-     * @param isTeamOne
-     * @return
+     * Method for calculating a move based on this type
+     * @param battleState the state the move is performed in
+     * @param target the target of the move
+     * @param attacker the minion performing the move
+     * @param isTeamOne a value to determine if the attacker is on team one, makes searching easier
+     * @return the calculated move, however the move is not applied yet
      */
-    public BattleMove calculateMove(BattleState battleState, BattleMinionIdentifier attacker, BattleMinionIdentifier target, boolean isTeamOne){
+    public BattleMove calculateMove(final BattleState battleState, final BattleMinionIdentifier attacker, final BattleMinionIdentifier target, final boolean isTeamOne){
        if(isLegal(battleState, target, isTeamOne)){
            if(isTeamOne){
                return new BattleMove(attacker, target, battleState.getTeamOne().get(attacker.getAvatarKey()).getBattleMinions().get(attacker.getMinionKey()).power);
@@ -38,19 +40,19 @@ public class MeleeType extends Type {
      * @param attacker is the attacker who wants to perform the moves
      * @return a list of BattleMinionIdentifiers, is empty if no moves are available
      */
-    public List<BattleMinionIdentifier> getAvailableMoves(BattleState state, BattleMinionIdentifier attacker){
-        List<BattleMinionIdentifier> availableMoves = new ArrayList<>();
+    public List<BattleMinionIdentifier> getAvailableMoves(final BattleState state, final BattleMinionIdentifier attacker){
+        final List<BattleMinionIdentifier> availableMoves = new ArrayList<>();
         if(!(state.getTeamOne().get(attacker.getAvatarKey()) == null)){
-            for(Map.Entry<String, BattleAvatar> avatarEntry: state.getTeamTwo().entrySet()){
-                for(Map.Entry<String, Minion> minionEntry : avatarEntry.getValue().getBattleMinions().entrySet()){
+            for(final Map.Entry<String, BattleAvatar> avatarEntry: state.getTeamTwo().entrySet()){
+                for(final Map.Entry<String, Minion> minionEntry : avatarEntry.getValue().getBattleMinions().entrySet()){
                     if(minionEntry.getValue().isAlive()){
                         availableMoves.add(new BattleMinionIdentifier(avatarEntry.getKey(), minionEntry.getKey()));
                     }
                 }
             }
         } else {
-            for(Map.Entry<String, BattleAvatar> avatarEntry: state.getTeamOne().entrySet()){
-                for(Map.Entry<String, Minion> minionEntry : avatarEntry.getValue().getBattleMinions().entrySet()){
+            for(final Map.Entry<String, BattleAvatar> avatarEntry: state.getTeamOne().entrySet()){
+                for(final Map.Entry<String, Minion> minionEntry : avatarEntry.getValue().getBattleMinions().entrySet()){
                     if(minionEntry.getValue().isAlive()){
                         availableMoves.add(new BattleMinionIdentifier(avatarEntry.getKey(), minionEntry.getKey()));
                     }
@@ -61,14 +63,14 @@ public class MeleeType extends Type {
     }
 
     /**
-     *
-     * @param battleState
-     * @param target
-     * @param isTeamOne
-     * @return
+     * Determines if a target is legal
+     * @param battleState the state the move is made in
+     * @param target the target of the move
+     * @param isTeamOne value to determine if attacker is on team one
+     * @return true if the target is a valid target for the attacker
      */
-    private boolean isLegal(BattleState battleState, BattleMinionIdentifier target, boolean isTeamOne){
-        BattleAvatar avatar;
+    private boolean isLegal(final BattleState battleState, final BattleMinionIdentifier target, final boolean isTeamOne){
+        final BattleAvatar avatar;
 
         if(isTeamOne){
             if((avatar = battleState.getTeamTwo().get(target.getAvatarKey())) != null) {

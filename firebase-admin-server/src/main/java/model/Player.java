@@ -1,33 +1,36 @@
 package model;
 
-import java.util.List;
-import java.util.Map;
-
 /**
- * Created by Tobias on 31/03/2017.
+ * Represents a player in our system
  */
 public class Player {
     private String name;
-    private int id;
-    private int gold = 0;
-    private Map<String, PlayerMinion> minions;
+    private final int gold = 0;
 
-    public Player(final String name, final int id) {
+    /**
+     * Constructor to create a player
+     * @param name of the player
+     */
+    public Player(final String name) {
         this.name = name;
-        this.id = id;
     }
 
+    /**
+     * Dafault constructor
+     */
     private Player() {}
 
+    /**
+     * Getter for the name
+     * @return the name of the player
+     */
     public String getName() {
         return name;
     }
 
-    public int getId() {
-        return id;
-    }
-
+    /**
+     * Getter for gold
+     * @return the amount of gold on the player
+     */
     public int getGold() {return gold;}
-
-    public Map<String, PlayerMinion> getMinions() { return minions; }
 }

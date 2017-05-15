@@ -2,11 +2,13 @@ package model;
 
 import battle.AvatarChoices;
 import battle.ChosenMove;
-import com.google.firebase.database.Exclude;
 
 import java.util.*;
 
-
+/**
+ * A class that represents a state of a battle, includes the teams participating in the battle,
+ * the moves performed to get to this state and a status of the battle
+ */
 public class BattleState {
     public static final String TEAM_TWO_WIN = "teamTwoWin";
     public static final String TEAM_ONE_WIN = "teamOneWin";
@@ -16,29 +18,56 @@ public class BattleState {
     private List<BattleMove> moves;
     private String status;
 
+    /**
+     * Constuctor of a battlestate, used when starting a battle, as no moves have been performed to start a battle
+     * the moves are not part of the constructor
+     * @param teamOne is the first team of the battle, should never consist of other than players
+     * @param teamTwo is the second team of the battle, it can consist of either a team of EMinions or a team of players
+     */
     public BattleState(final Map<String, BattleAvatar> teamOne, final Map<String, BattleAvatar> teamTwo){
         this.teamOne = teamOne;
         this.teamTwo = teamTwo;
-        moves = new ArrayList<BattleMove>();
-        status = "running";
+        moves = new ArrayList<>();
+        status = RUNNING;
     }
 
+    /**
+     * Default constuctor, for Firebase
+     */
     private BattleState() {
     }
 
+    /**
+     * Getter for teamOne
+     * @return a map of BattleAvatar's on team one
+     */
     public Map<String, BattleAvatar> getTeamOne() { return teamOne; }
+
+    /**
+     * Getter for teamTwo
+     * @return a map of BattleAvatar's on team two
+     */
     public Map<String, BattleAvatar> getTeamTwo() { return teamTwo; }
+
+    /**
+     * Getter for moves
+     * @return a list of BattleMove's
+     */
     public List<BattleMove> getMoves() { return moves; }
+
+
+    /**
+     * Getter for the status
+     * @return the status of the state
+     */
+    public String getStatus(){ return status; }
 
     /**
      * Gets if the battle is over
      * @return true if, and only if, the battle is over
      */
     public boolean isOver(){
-        if(status == TEAM_ONE_WIN || status == TEAM_TWO_WIN){
-            return true;
-        }
-        return false;
+        return status.equals(TEAM_ONE_WIN) || status.equals(TEAM_TWO_WIN);
     }
 
     /**
@@ -55,14 +84,14 @@ public class BattleState {
             status = TEAM_ONE_WIN;
         }
 
-        for(BattleAvatar avatar: teamOne.values()){
+        for(final BattleAvatar avatar: teamOne.values()){
             if(avatar.hasAliveMinions()){
                 teamOneDead = false;
                 break;
             }
         }
 
-        for(BattleAvatar avatar: teamTwo.values()){
+        for(final BattleAvatar avatar: teamTwo.values()){
             if(avatar.hasAliveMinions()){
                 teamTwoDead = false;
                 break;
@@ -195,11 +224,11 @@ public class BattleState {
      * @param attacker two keys used to identify a specific minion in a battlestate that represents the minion performing the move
      * @param target two keys used to identify a specific minion in a battlestate that represents the target of the move
      */
-    public void performAndReportMove(BattleMinionIdentifier attacker, BattleMinionIdentifier target){
+    public void performAndReportMove(final BattleMinionIdentifier attacker, final BattleMinionIdentifier target){
         System.out.println("TOB, BattleState, performAndReportMove, " + attacker.getAvatarKey() + ", " + attacker.getMinionKey() + ", " + target.getAvatarKey() + ", " + target.getMinionKey());
 
-        Minion minionAttacker;
-        BattleMove move;
+        final Minion minionAttacker;
+        final BattleMove move;
         BattleAvatar avatar;
 
         if((avatar = getTeamOne().get(attacker.getAvatarKey())) != null){
@@ -215,12 +244,17 @@ public class BattleState {
         }
     }
 
-    private void applyMove(BattleMove move, boolean isTeamOne){
+    /**
+     * Applies moves to the state
+     * @param move that needs to be applied
+     * @param isTeamOne a value that determines if the move is being performed by a minion on team one
+     */
+    private void applyMove(final BattleMove move, final boolean isTeamOne){
         if(move == null){
             return;
         }
 
-        Minion target;
+        final Minion target;
         if(isTeamOne){
             target = teamTwo.get(move.getTarget().getAvatarKey()).getBattleMinions().get(move.getTarget().getMinionKey());
             target.battleStats.setCurrentHP(target.battleStats.getCurrentHP() - move.getMoveValue());
@@ -231,19 +265,14 @@ public class BattleState {
         moves.add(move);
     }
 
+    /**
+     * An iterator that iterators through entries on teamOne and teamTwo
+     * @return an iterator of map entries
+     */
     public Iterator<Map.Entry<String, BattleAvatar>> EntryIterator() {
-        Set<Map.Entry<String, BattleAvatar>> avatars = new HashSet<>();
+        final Set<Map.Entry<String, BattleAvatar>> avatars = new HashSet<>();
         avatars.addAll(teamOne.entrySet());
         avatars.addAll(teamTwo.entrySet());
         return avatars.iterator();
     }
-
-    public Iterator<BattleAvatar> valueIterator() {
-        List<BattleAvatar> avatars = new ArrayList<>();
-        avatars.addAll(teamOne.values());
-        avatars.addAll(teamTwo.values());
-        return avatars.iterator();
-    }
-
-    public String getStatus(){ return status; }
 }

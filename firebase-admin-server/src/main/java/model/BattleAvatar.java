@@ -10,8 +10,8 @@ import java.util.*;
  * and a possible userId if the battle avatar is being controlled by a player
  */
 public class BattleAvatar {
-    private Map<String,Minion> battleMinions;
-    private boolean isPlayerControlled;
+    private final Map<String,Minion> battleMinions;
+    private final boolean isPlayerControlled;
 
     /**
      * Constructor for creating a battle avatar with a list of minions and a user ID.
@@ -30,7 +30,7 @@ public class BattleAvatar {
         isPlayerControlled = false;
         battleMinions = new HashMap<>();
         for (int i = 0; i < eMinion.getSize(); i++){
-            Minion eMinionToPut = eMinion.createMinion();
+            final Minion eMinionToPut = eMinion.createMinion();
             eMinionToPut.battleStats = new BattleStats(eMinionToPut);
             eMinionToPut.assignTypeClass();
             battleMinions.put("minion-" + i, eMinionToPut);
@@ -39,7 +39,7 @@ public class BattleAvatar {
 
 
     /**
-     * Getter for battleminions
+     * Getter for BattleMinions
      * @return battleMinions
      */
     public Map<String,Minion> getBattleMinions(){ return battleMinions; }
@@ -69,7 +69,12 @@ public class BattleAvatar {
         return false;
     }
 
-    public void addMinion(String key, PlayerMinion minion){
+    /**
+     * Adds a minion to the map of minions
+     * @param key of the minion that is being added
+     * @param minion that is being added
+     */
+    public void addMinion(final String key, final PlayerMinion minion){
         minion.battleStats = new BattleStats(minion);
         minion.assignTypeClass();
         battleMinions.put(key, minion);

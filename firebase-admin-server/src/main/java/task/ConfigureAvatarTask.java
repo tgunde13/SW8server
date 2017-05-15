@@ -66,7 +66,7 @@ class ConfigureAvatarTask extends Task {
                 }
 
                 // Create player
-                final Player player = new Player(name, 1);
+                final Player player = new Player(name);
                 FirebaseDatabase.getInstance().getReference().push().getKey();
 
                 // Upload player to Firebase

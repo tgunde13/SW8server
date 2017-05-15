@@ -169,9 +169,9 @@ public class BattleSession {
                 System.out.println("TOB: BattleSession, updateFirebaseAndSchedule, game is over");
 
                 //Create rewards
-                Rewards rewards = new Rewards(state);
+                final Rewards rewards = new Rewards(state);
                 // Apply rewards
-                applyRewardsAndRemoveStatus(state, rewards);
+                applyRewardsAndRemoveStatus(rewards);
                 // Upload to Firebase
                 ref.setValue(rewards.rewards);
 
@@ -263,15 +263,18 @@ public class BattleSession {
         return false;
     }
 
-
-    private void applyRewardsAndRemoveStatus(BattleState state, Rewards rewards){
-        for(Map.Entry<String, Reward> entry : rewards.rewards.entrySet()){
+    /**
+     * Applies a map of rewards to the players participating in this battle
+     * @param rewards a class that includes a map of rewards and who they belong to
+     */
+    private void applyRewardsAndRemoveStatus(final Rewards rewards){
+        for(final Map.Entry<String, Reward> entry : rewards.rewards.entrySet()){
             final DatabaseReference playerRef = FirebaseDatabase.getInstance().getReference(FirebaseNodes.PLAYERS).child(entry.getKey());
 
             playerRef.child(FirebaseNodes.PLAYER_STATUS).removeValue();
 
             // Remove dead minions
-            for(String deadMinion : entry.getValue().getDeadMinions()) {
+            for(final String deadMinion : entry.getValue().getDeadMinions()) {
                 playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(deadMinion).removeValue();
             }
 
@@ -285,9 +288,9 @@ public class BattleSession {
                 playerRef.child(FirebaseNodes.PLAYER_GOLD).setValue((int) (long) (Long)dataSnapshot.getValue() + entry.getValue().getGold());
 
                 // Add xp to each minion that is still alive on the specific players team
-                for(String minionKey : entry.getValue().getUsedMinions()){
+                for(final String minionKey : entry.getValue().getUsedMinions()){
                     playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(minionKey).addListenerForSingleValueEvent(new DataChangeListenerAdapter(minionDataSnapshot -> {
-                        PlayerMinion minion = minionDataSnapshot.getValue(PlayerMinion.class);
+                        final PlayerMinion minion = minionDataSnapshot.getValue(PlayerMinion.class);
                         minion.addXP(entry.getValue().getXp());
                         playerRef.child(FirebaseNodes.PLAYER_MINIONS).child(minionKey).setValue(minion);
                     }));

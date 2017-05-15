@@ -66,7 +66,7 @@ class ConfigureAvatarTask extends Task {
                 }
 
                 // Create player
-                final Player player = new Player(name, 1);
+                final Player player = new Player(name);
                 FirebaseDatabase.getInstance().getReference().push().getKey();
 
                 // Upload player to Firebase
@@ -74,7 +74,7 @@ class ConfigureAvatarTask extends Task {
                 playerRef.setValue(player).addOnFailureListener(failureListener)
                 .addOnSuccessListener(aVoid -> {
                     // Create minion for player
-                    final PlayerMinion minion = new PlayerMinion("Footsoldier", 10, 20, 40, 1, "Melee");
+                    final PlayerMinion minion = new PlayerMinion("Swordman", 100, 20, 40, 1, "Melee");
 
                     playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(minion).addOnFailureListener(failureListener)
                     .addOnSuccessListener(aVoid1 -> ResponseHandler.respond(userId, HttpCodes.OK));

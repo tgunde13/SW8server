@@ -7,9 +7,7 @@ import firebase.FirebaseNodes;
 import firebase.FirebaseValues;
 import model.*;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.function.BiConsumer;
 
@@ -40,11 +38,11 @@ class SoloPveBattleTask extends BattleTask {
     @Override
     void run() {
         getEnvironmentSquad((key, eMinion) -> setPlayerStatus(() -> {
-            final List<BattleAvatar> playerTeam = new ArrayList<>();
-            playerTeam.add(new BattleAvatar(userId));
+            final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+            playerTeam.put(userId, new BattleAvatar());
 
-            final List<BattleAvatar> eTeam = new ArrayList<>();
-            eTeam.add(new BattleAvatar(key, eMinion));
+            final Map<String, BattleAvatar> eTeam =     new HashMap<>();
+            eTeam.put(key, new BattleAvatar(eMinion));
 
             final BattleState state = new BattleState(playerTeam, eTeam);
 
@@ -65,7 +63,7 @@ class SoloPveBattleTask extends BattleTask {
      * If environment squad is not found, a NOT_FOUND is responded.
      * @param action action to call if successful
      */
-    private void getEnvironmentSquad(final BiConsumer<String, EMinion> action) {
+    private void getEnvironmentSquad(final BiConsumer<String, EMinionTemplate> action) {
         final Zone zone;
         final String key;
 
@@ -87,7 +85,7 @@ class SoloPveBattleTask extends BattleTask {
         .child(String.valueOf(zone.getLatIndex())).child(String.valueOf(zone.getLonIndex())).child(key)
         .addListenerForSingleValueEvent(new DataChangeListenerAdapter(dataSnapshot -> {
             if (dataSnapshot.exists()) {
-                action.accept(key, dataSnapshot.getValue(EMinion.class));
+                action.accept(key, dataSnapshot.getValue(EMinionTemplate.class));
             } else {
                 ResponseHandler.respond(userId, HttpCodes.NOT_FOUND);
             }

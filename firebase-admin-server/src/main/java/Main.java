@@ -1,15 +1,10 @@
-import battle.ChosenMoves;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
 import com.google.firebase.auth.FirebaseCredentials;
 import com.google.firebase.database.*;
-import firebase.FirebaseNodes;
-import model.EMinion;
 import task.TaskManager;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by lapiki on 3/13/17.
@@ -19,7 +14,7 @@ public class Main {
         //Sets up a Firebase connection with admin privileges.
         setUpFirebaseAdmin();
 
-        new Generator().start();
+        //new Generator().start();
         TaskManager.start();
 
         Thread.currentThread().join();

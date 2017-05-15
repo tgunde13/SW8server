@@ -1,25 +1,49 @@
 package model;
 
-import java.util.List;
-
 /**
- * Created by Chres on 18-04-2017.
+ * Class that represents a moveValue made by a minion
  */
 public class BattleMove {
-    //First minion in list is the minion doing the move, the rest are targets
-    private List<Minion> minions;
+    private BattleMinionIdentifier attackingMinionKey;
+    private BattleMinionIdentifier targetMinionKey;
+    private int moveValue;
 
-    private int abilityValue;
+    /**
+     * Constructor for BattleMove
+     * @param attackingMinionKey key of the minion that is making the moveValue
+     * @param targetMinionKeys key of the minion that is the target of the moveValue
+     * @param moveValue the value of the moveValue
+     */
+    public BattleMove(final BattleMinionIdentifier attackingMinionKey, final BattleMinionIdentifier targetMinionKeys, final int moveValue){
+        this.attackingMinionKey = attackingMinionKey;
+        this.targetMinionKey = targetMinionKeys;
+        this.moveValue = moveValue;
 
-    public BattleMove(final List<Minion> minions, final int abilityValue){
-        this.minions = minions;
-        this.abilityValue = abilityValue;
     }
 
+    /**
+     * Default constructor, used by firebase
+     */
     private BattleMove(){
     }
 
-    public List<Minion> getMinions() { return minions;}
+    /**
+     * Getter for attackingMinionKey
+     * @return the key of the attacking minion
+     */
+    public BattleMinionIdentifier getAttacker(){ return  attackingMinionKey;}
 
-    public int getAbilityValue() {return abilityValue;}
+    /**
+     * Getter for targetMinionKey
+     * @return the key of the target minion
+     */
+    public BattleMinionIdentifier getTarget() { return targetMinionKey;}
+
+    /**
+     * Getter for ability value
+     * @return the value associated with this moveValue
+     */
+    public int getMoveValue() {
+        return moveValue;
+    }
 }

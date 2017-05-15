@@ -20,6 +20,7 @@ public class FirebaseNodes {
     public static final String PLAYER_MINIONS = "minions";
     public static final String PLAYER_VISIBLE = "visible";
     public static final String PLAYER_STATUS = "status";
+    public static final String PLAYER_GOLD = "gold";
 
     // Avatar name index
     public static final String NAME_INDEX = "nameIndex";

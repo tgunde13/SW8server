@@ -10,48 +10,39 @@ import java.util.*;
  * and a possible userId if the battle avatar is being controlled by a player
  */
 public class BattleAvatar {
-    private Map<String,Minion> battleMinions;
-    private String userId;
+    private final Map<String,Minion> battleMinions;
+    private final boolean isPlayerControlled;
 
     /**
      * Constructor for creating a battle avatar with a list of minions and a user ID.
-     * @param UserId Id of the user this avatar belongs to.
      */
-    public BattleAvatar(final String UserId){
+    public BattleAvatar(){
         battleMinions = new HashMap<>();
-        this.userId = UserId;
+        isPlayerControlled = true;
     }
 
     /**
      * Constructor for a battle avatar that does not belong to a player but an environment minion.
+     * Creates a number of environment minions equal to the size of the environment minion
      * @param eMinion is the environment minion that is being fought.
      */
-    public BattleAvatar(String key, final EMinion eMinion){
+    public BattleAvatar(final EMinionTemplate eMinion){
+        isPlayerControlled = false;
         battleMinions = new HashMap<>();
-        eMinion.battleStats = new BattleStats(eMinion);
-        battleMinions.put(key, eMinion);
+        for (int i = 0; i < eMinion.getSize(); i++){
+            final Minion eMinionToPut = eMinion.createMinion();
+            eMinionToPut.battleStats = new BattleStats(eMinionToPut);
+            eMinionToPut.assignTypeClass();
+            battleMinions.put("minion-" + i, eMinionToPut);
+        }
     }
 
 
     /**
-     * Default constructor, used by firebase
-     */
-    private BattleAvatar(){
-    }
-
-
-    /**
-     * Getter for battleminions
+     * Getter for BattleMinions
      * @return battleMinions
      */
     public Map<String,Minion> getBattleMinions(){ return battleMinions; }
-
-
-    /**
-     * Getter for userId
-     * @return userId
-     */
-    public String getUserId() { return userId; }
 
     /**
      *
@@ -60,7 +51,7 @@ public class BattleAvatar {
      */
     @Exclude
     public boolean isPlayerControlled() {
-        return userId != null;
+        return isPlayerControlled;
     }
 
     /**
@@ -76,5 +67,16 @@ public class BattleAvatar {
         }
 
         return false;
+    }
+
+    /**
+     * Adds a minion to the map of minions
+     * @param key of the minion that is being added
+     * @param minion that is being added
+     */
+    public void addMinion(final String key, final PlayerMinion minion){
+        minion.battleStats = new BattleStats(minion);
+        minion.assignTypeClass();
+        battleMinions.put(key, minion);
     }
 }

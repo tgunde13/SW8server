@@ -23,6 +23,7 @@ public class BattleStats {
     /**
      * Default Constructor
      */
+    @SuppressWarnings("unused")
     private BattleStats(){
     }
 
@@ -42,6 +43,7 @@ public class BattleStats {
      * Getter for the currentPower
      * @return currentPower
      */
+    @SuppressWarnings("unused")
     public int getCurrentPower(){return currentPower; }
 
     /**

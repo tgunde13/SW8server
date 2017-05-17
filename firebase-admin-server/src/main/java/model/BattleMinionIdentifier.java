@@ -46,6 +46,10 @@ public class BattleMinionIdentifier {
             return false;
         }
 
+        if(!(obj.getClass() == BattleMinionIdentifier.class)){
+            return false;
+        }
+
         final BattleMinionIdentifier identifier = (BattleMinionIdentifier) obj;
 
         return avatarKey.equals(identifier.avatarKey) && minionKey.equals(identifier.minionKey);

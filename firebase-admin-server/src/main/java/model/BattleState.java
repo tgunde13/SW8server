@@ -34,6 +34,7 @@ public class BattleState {
     /**
      * Default constuctor, for Firebase
      */
+    @SuppressWarnings("unused")
     private BattleState() {
     }
 
@@ -53,6 +54,7 @@ public class BattleState {
      * Getter for moves
      * @return a list of BattleMove's
      */
+    @SuppressWarnings("unused")
     public List<BattleMove> getMoves() { return moves; }
 
 

@@ -28,6 +28,7 @@ public class PlayerMinion extends Minion {
      * Getter for xp
      * @return xp
      */
+    @SuppressWarnings("unused")
     public int getXp() {
         return xp;
     }

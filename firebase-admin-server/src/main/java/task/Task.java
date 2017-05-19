@@ -29,5 +29,6 @@ abstract class Task {
     /**
      * Performs this task.
      */
+    @SuppressWarnings("unused")
     abstract void run();
 }

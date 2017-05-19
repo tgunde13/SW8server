@@ -18,12 +18,14 @@ public class Player {
     /**
      * Dafault constructor
      */
+    @SuppressWarnings("unused")
     private Player() {}
 
     /**
      * Getter for the name
      * @return the name of the player
      */
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
@@ -32,5 +34,6 @@ public class Player {
      * Getter for gold
      * @return the amount of gold on the player
      */
+    @SuppressWarnings("unused")
     public int getGold() {return gold;}
 }

@@ -34,6 +34,7 @@ class Reward {
     /**
      * Defualt constructor, for firebase
      */
+    @SuppressWarnings("unused")
     private Reward(){}
 
     /**

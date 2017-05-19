@@ -24,6 +24,7 @@ public class BattleMove {
     /**
      * Default constructor, used by firebase
      */
+    @SuppressWarnings("unused")
     private BattleMove(){
     }
 
@@ -31,6 +32,7 @@ public class BattleMove {
      * Getter for attackingMinionKey
      * @return the key of the attacking minion
      */
+    @SuppressWarnings("unused")
     public BattleMinionIdentifier getAttacker(){ return  attackingMinionKey;}
 
     /**

@@ -48,12 +48,13 @@ public class Minion {
     /**
      * Default constructor, used for firebase
      */
-    protected Minion() {}
+    Minion() {}
 
     /**
      * Getter for name
      * @return name of the minion
      */
+    @SuppressWarnings("unused")
     public String getName() {
         return name;
     }
@@ -62,18 +63,21 @@ public class Minion {
      * Getter for health
      * @return health of the minion
      */
+    @SuppressWarnings("unused")
     public int getHealth() { return health; }
 
     /**
      * Getter for speed
      * @return speed of the minion
      */
+    @SuppressWarnings("unused")
     public int getSpeed() { return speed; }
 
     /**
      * Getter for power
      * @return power of the minion
      */
+    @SuppressWarnings("unused")
     public int getPower() { return power; }
 
     /**
@@ -88,6 +92,7 @@ public class Minion {
      * Getter for the type
      * @return type of minion
      */
+    @SuppressWarnings("unused")
     public String getType() {
         return type;
     }

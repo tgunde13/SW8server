@@ -280,7 +280,7 @@ public class BattleSession {
 
             // Add new minion
             if(!(entry.getValue().getMinion() == null)){
-                playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(entry.getValue().getMinion());
+                playerRef.child(FirebaseNodes.PLAYER_MINIONS).push().setValue(new PlayerMinion(entry.getValue().getMinion()));
             }
 
             // Add gold to player

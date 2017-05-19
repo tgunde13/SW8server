@@ -20,6 +20,14 @@ public class PlayerMinion extends Minion {
     }
 
     /**
+     * Constructor to convert a minion to a player minion
+     * @param minion takes a minion
+     */
+    public PlayerMinion(final Minion minion) {
+        super(minion.getName(), minion.getHealth(), minion.getSpeed(), minion.getPower(), minion.getLevel(), minion.getType());
+    }
+
+    /**
      * Default constructor
      */
     private PlayerMinion() {}

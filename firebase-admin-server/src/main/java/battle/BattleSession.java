@@ -158,11 +158,11 @@ public class BattleSession {
      */
     private void updateFirebaseAndSchedule() {
         System.out.println("TOB: BattleSession, updateFirebaseAndSchedule");
+        state.evaluateStatus();
         uploadState();
 
         chosenMovesRef.setValue(new AvailableMoves(serverTurn, state)).addOnSuccessListener(aVoid -> {
             // If if game is over
-            state.evaluateStatus();
             if (state.isOver()) {
                 // Stop listening
                 chosenMovesRef.removeEventListener(listener);

@@ -46,10 +46,9 @@ class SetZoneTask extends Task {
     @Override
     void run() {
         // Get new zone
-        final Zone newZone;
-        try {
-            newZone = snapshot.child(FirebaseNodes.TASK_DATA).getValue(Zone.class);
-        } catch (final DatabaseException e) {
+        final Zone newZone = snapshot.child(FirebaseNodes.TASK_DATA).getValue(Zone.class);
+
+        if (newZone == null) {
             ResponseHandler.respond(userId, HttpCodes.BAD_REQUEST);
             return;
         }

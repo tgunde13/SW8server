@@ -75,7 +75,7 @@ public class BattleAvatar {
      * @param minion that is being added
      */
     public void addMinion(final String key, final PlayerMinion minion){
-        minion.battleStats = new BattleStats(minion);
+        minion.createBattleStats();
         minion.assignTypeClass();
         battleMinions.put(key, minion);
     }

@@ -143,4 +143,40 @@ public class BattleStateTest {
         assertEquals(1, state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").getBattleStats().getCurrentHP());
     }
 
+    @Test
+    public void evaluateStatusTest() {
+        // Player team
+        final Map<String, BattleAvatar> playerTeam = new HashMap<>();
+        final BattleAvatar playerAvatar = new BattleAvatar();
+        playerAvatar.addMinion("pMinion1", new PlayerMinion("name1", 1, 6, 1, 1, "Melee"));
+        playerTeam.put("uid1", playerAvatar);
+
+        // E team
+        final Map<String, BattleAvatar> eTeam = new HashMap<>();
+        eTeam.put("eKey1", new BattleAvatar(new EMinionTemplate(57.0, 10.0, 1, "name", 1, 5, 1, 1, "Melee")));
+
+        final BattleState state = new BattleState(playerTeam, eTeam);
+
+        final BattleState emptyOneState = new BattleState(new HashMap<>(), eTeam);
+        final BattleState emptyTwoState = new BattleState(playerTeam, new HashMap<>());
+
+        emptyOneState.evaluateStatus();
+        assertTrue(emptyOneState.getStatus().equals(state.TEAM_TWO_WIN));
+
+        emptyTwoState.evaluateStatus();
+        assertTrue(emptyTwoState.getStatus().equals(state.TEAM_ONE_WIN));
+
+        state.evaluateStatus();
+        assertTrue(state.getStatus().equals("running"));
+
+        state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").battleStats.setCurrentHP(0);
+        state.evaluateStatus();
+        assertTrue(state.getStatus().equals(state.TEAM_ONE_WIN));
+
+        state.getTeamTwo().get("eKey1").getBattleMinions().get("minion-0").battleStats.setCurrentHP(1);
+        state.getTeamOne().get("uid1").getBattleMinions().get("pMinion1").battleStats.setCurrentHP(0);
+        state.evaluateStatus();
+        assertTrue(state.getStatus().equals(state.TEAM_TWO_WIN));
+    }
+
 }

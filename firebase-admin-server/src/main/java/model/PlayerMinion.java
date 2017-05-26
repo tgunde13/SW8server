@@ -59,8 +59,8 @@ public class PlayerMinion extends Minion {
         if(level == MAX_LEVEL){
          xp = level * 10;
         }
-        level++;
         xp = xp-(level * 10);
+        level++;
         if(name.equals("Swordman")){
             health += 100;
             power += 35;
